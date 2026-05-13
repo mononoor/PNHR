@@ -32,16 +32,16 @@ log "  Arch: $(uname -m) → Hy2:${HY_ARCH}"
 
 # ══════════════════════════════════════════════════════
 step 1
-log "▶ Установка зависимостей..."
+log "▶ Installing dependencies..."
 # ══════════════════════════════════════════════════════
 
 apt-get update -qq -o DPkg::Lock::Timeout=60 2>/dev/null || true
 apt-get install -y -qq curl wget jq libcap2-bin ufw ca-certificates 2>/dev/null || true
-log "✅ Зависимости готовы"
+log "✅ Dependencies ready"
 
 # ══════════════════════════════════════════════════════
 step 2
-log "▶ UDP-оптимизации..."
+log "▶ UDP optimizations..."
 # ══════════════════════════════════════════════════════
 
 cat > /etc/sysctl.d/99-rixxx-tune.conf << 'SYSCTLEOF'
@@ -55,11 +55,11 @@ net.ipv4.tcp_fastopen=3
 SYSCTLEOF
 sysctl --system >/dev/null 2>&1 || true
 
-log "✅ Сетевой тюнинг применён"
+log "✅ Network tuning applied"
 
 # ══════════════════════════════════════════════════════
 step 3
-log "▶ Настройка файрволла..."
+log "▶ Configuring firewall..."
 # ══════════════════════════════════════════════════════
 
 ufw allow 22/tcp  >/dev/null 2>&1 || true
@@ -68,11 +68,11 @@ ufw allow 443/tcp >/dev/null 2>&1 || true
 ufw allow 443/udp >/dev/null 2>&1 || true
 echo "y" | ufw enable >/dev/null 2>&1 || ufw --force enable >/dev/null 2>&1 || true
 
-log "✅ UDP/443 открыт"
+log "✅ UDP/443 opened"
 
 # ══════════════════════════════════════════════════════
 step 4
-log "▶ Загрузка Hysteria2 (arch: ${HY_ARCH})..."
+log "▶ Downloading Hysteria2 (arch: ${HY_ARCH})..."
 # ══════════════════════════════════════════════════════
 
 HY_VERSION=$(curl -fsSL --connect-timeout 10 \
@@ -80,21 +80,21 @@ HY_VERSION=$(curl -fsSL --connect-timeout 10 \
   | jq -r '.tag_name' 2>/dev/null || echo "")
 [[ -z "$HY_VERSION" || "$HY_VERSION" == "null" ]] && HY_VERSION="app/v2.5.2"
 
-log "  Версия: ${HY_VERSION}"
+log "  Version: ${HY_VERSION}"
 HY_URL="https://github.com/apernet/hysteria/releases/download/${HY_VERSION}/hysteria-linux-${HY_ARCH}"
 
 wget -q --timeout=120 "${HY_URL}" -O /usr/local/bin/hysteria 2>&1 || {
-  log "⚠ Не удалось скачать ${HY_VERSION}, fallback → app/v2.5.2"
+  log "⚠ Failed to download ${HY_VERSION}, fallback → app/v2.5.2"
   wget -q --timeout=120 \
     "https://github.com/apernet/hysteria/releases/download/app/v2.5.2/hysteria-linux-${HY_ARCH}" \
     -O /usr/local/bin/hysteria || {
-    log "ERROR: Не удалось скачать hysteria!"
+    log "ERROR: Failed to download hysteria!"
     exit 1
   }
 }
 
 if [[ ! -s /usr/local/bin/hysteria ]]; then
-  log "ERROR: бинарник hysteria пустой"
+  log "ERROR: hysteria binary is empty"
   exit 1
 fi
 
@@ -102,11 +102,11 @@ chmod +x /usr/local/bin/hysteria
 setcap 'cap_net_bind_service=+ep' /usr/local/bin/hysteria 2>/dev/null || true
 
 HY_VER=$(/usr/local/bin/hysteria version 2>&1 | head -n1 || echo "unknown")
-log "✅ Hysteria2 установлена: $HY_VER"
+log "✅ Hysteria2 installed: $HY_VER"
 
 # ══════════════════════════════════════════════════════
 step 5
-log "▶ Создание конфига..."
+log "▶ Creating config..."
 # ══════════════════════════════════════════════════════
 
 mkdir -p /etc/hysteria
@@ -117,8 +117,8 @@ cat > /etc/hysteria/config.yaml << HYCFGEOF
 #  https://v2.hysteria.network/
 # ═══════════════════════════════════════════════
 
-# Если Caddy занимает TCP/443 — Hy2 слушает только UDP/443.
-# Hysteria2 работает поверх QUIC (UDP), TCP ему не нужен.
+# If Caddy occupies TCP/443 — Hy2 listens only on UDP/443.
+# Hysteria2 works over QUIC (UDP), TCP is not needed.
 listen: :443
 
 auth:
@@ -126,8 +126,8 @@ auth:
   userpass:
     default: "${PASSWORD}"
 
-# Маскировка: отдаёт ту же статичную страницу что Caddy. Нет лишних
-# внешних запросов → нет ошибок H3_GENERAL_PROTOCOL_ERROR в логах.
+# Masquerade: serves the same static page as Caddy. No extra
+# external requests → no H3_GENERAL_PROTOCOL_ERROR in logs.
 masquerade:
   type: file
   file:
@@ -135,7 +135,7 @@ masquerade:
 
 HYCFGEOF
 
-# Убедимся что директория с HTML существует (на случай standalone Hy2 без Caddy)
+# Ensure the HTML directory exists (in case of standalone Hy2 without Caddy)
 mkdir -p /var/www/html
 if [[ ! -f /var/www/html/index.html ]]; then
   cat > /var/www/html/index.html << 'MASQEOF'
@@ -146,16 +146,16 @@ MASQEOF
 fi
 
 if [[ "$USE_CADDY_CERT" == "1" ]]; then
-  # ── КРИТИЧНО: если Caddy уже запущен — он скорее всего слушает UDP/443
-  # для HTTP/3 (QUIC), и Hy2 не сможет занять этот порт. Перепишем Caddyfile
-  # с отключением HTTP/3 и перезагрузим Caddy ПЕРЕД запуском Hy2.
+  # ── CRITICAL: if Caddy is already running — it likely listens on UDP/443
+  # for HTTP/3 (QUIC), and Hy2 will not be able to bind that port. Overwrite Caddyfile
+  # with HTTP/3 disabled and reload Caddy BEFORE starting Hy2.
   if [[ -f /etc/caddy/Caddyfile ]] && ! grep -q "protocols h1 h2" /etc/caddy/Caddyfile; then
-    log "  Отключаем HTTP/3 в Caddy (освобождаем UDP/443 для Hy2)..."
+    log "  Disabling HTTP/3 in Caddy (freeing UDP/443 for Hy2)..."
 
-    # Создаём бэкап
+    # Create backup
     cp /etc/caddy/Caddyfile "/etc/caddy/Caddyfile.bak.$(date +%s)" 2>/dev/null || true
 
-    # Пытаемся через python3 (надёжнее), fallback на sed
+    # Try via python3 (more reliable), fallback to sed
     PY_OK=0
     if command -v python3 >/dev/null 2>&1; then
       python3 << 'PYEOF' && PY_OK=1
@@ -186,31 +186,31 @@ PYEOF
     fi
 
     if [[ $PY_OK -ne 1 ]]; then
-      log "  (fallback на sed)"
-      # Если глобальный блок есть — заменяем первое } на servers + }
+      log "  (fallback to sed)"
+      # If global block exists — replace the first } with servers + }
       if head -n 5 /etc/caddy/Caddyfile | grep -qE '^\s*\{\s*$'; then
         sed -i '0,/^}/s|^}|  servers {\n    protocols h1 h2\n  }\n}|' /etc/caddy/Caddyfile
       else
-        # Глобального блока нет — добавляем в начало
+        # No global block — add at the beginning
         sed -i '1i {\n  servers {\n    protocols h1 h2\n  }\n}\n' /etc/caddy/Caddyfile
       fi
     fi
 
-    # Перезагружаем Caddy чтобы UDP/443 освободился
+    # Reload Caddy to free UDP/443
     systemctl reload caddy 2>/dev/null || systemctl restart caddy 2>/dev/null || true
     sleep 2
-    log "✅ HTTP/3 в Caddy отключён, UDP/443 свободен"
+    log "✅ HTTP/3 disabled in Caddy, UDP/443 free"
   fi
 
-  # Caddy может получить сертификат от любого CA (LE / ZeroSSL / Google).
-  # Ищем через find по любому пути, не только acme-v02.api.letsencrypt.org.
+  # Caddy may obtain a certificate from any CA (LE / ZeroSSL / Google).
+  # Search via find on any path, not only acme-v02.api.letsencrypt.org.
   CADDY_CERT_ROOTS=(
     "/var/lib/caddy/.local/share/caddy/certificates"
     "/root/.local/share/caddy/certificates"
   )
   CADDY_CERT_DIR=""
 
-  log "  Ждём сертификат от Caddy (до 150с, любой CA)..."
+  log "  Waiting for certificate from Caddy (up to 150s, any CA)..."
   for i in $(seq 1 75); do
     for ROOT in "${CADDY_CERT_ROOTS[@]}"; do
       [[ -d "$ROOT" ]] || continue
@@ -218,7 +218,7 @@ PYEOF
       if [[ -n "$FOUND" && -f "${FOUND%.crt}.key" ]]; then
         CADDY_CERT_DIR="$(dirname "$FOUND")"
         CA_NAME="$(basename "$(dirname "$CADDY_CERT_DIR")")"
-        log "✅ Сертификат найден (${i}х2 с) — CA: ${CA_NAME}"
+        log "✅ Certificate found (${i}x2 s) — CA: ${CA_NAME}"
         break 2
       fi
     done
@@ -226,22 +226,22 @@ PYEOF
   done
 
   if [[ -z "$CADDY_CERT_DIR" ]]; then
-    log "⚠ Сертификат Caddy не найден за 150с."
-    log "  Hy2 НЕ запускается с собственным ACME (риск Let's Encrypt 429 rate limit)."
-    log "  Почините Caddy, потом: systemctl restart hysteria-server"
+    log "⚠ Caddy certificate not found after 150s."
+    log "  Hy2 does NOT start with its own ACME (risk of Let's Encrypt 429 rate limit)."
+    log "  Fix Caddy, then: systemctl restart hysteria-server"
     systemctl status caddy --no-pager -l 2>&1 | tail -10
     cat >> /etc/hysteria/config.yaml << 'HYNOTLSEOF'
-# ⚠ Сертификат не был готов при установке.
-# После починки Caddy:
+# ⚠ Certificate was not ready at installation time.
+# After fixing Caddy:
 #   1) find /var/lib/caddy -name '*.crt'
-#   2) Подставьте найденные пути:
+#   2) Substitute the found paths:
 #      tls:
 #        cert: /var/lib/caddy/.../<domain>.crt
 #        key:  /var/lib/caddy/.../<domain>.key
 #   3) systemctl restart hysteria-server
 HYNOTLSEOF
   else
-    # Разрешаем hysteria читать файлы Caddy
+    # Allow hysteria to read Caddy files
     chmod -R 755 "$(dirname "$CADDY_CERT_DIR")" 2>/dev/null || true
     chmod 644 "${CADDY_CERT_DIR}/${DOMAIN}.crt" 2>/dev/null || true
     chmod 640 "${CADDY_CERT_DIR}/${DOMAIN}.key" 2>/dev/null || true
@@ -252,8 +252,8 @@ tls:
   key:  ${CADDY_CERT_DIR}/${DOMAIN}.key
 HYTLSEOF
 
-    # Watcher: при обновлении сертификата Caddy → рестарт Hy2.
-    # Используем CADDY_CERT_DIR (фактический путь с любым CA).
+    # Watcher: when Caddy certificate updates → restart Hy2.
+    # Use CADDY_CERT_DIR (actual path with any CA).
     cat > /etc/systemd/system/caddy-cert-watcher.path << WATCHEOF
 [Unit]
 Description=Watch Caddy cert for changes -> restart hysteria-server
@@ -277,12 +277,12 @@ WATCHSVCEOF
     systemctl daemon-reload
     systemctl enable caddy-cert-watcher.path >/dev/null 2>&1 || true
     systemctl start  caddy-cert-watcher.path >/dev/null 2>&1 || true
-    log "✅ caddy-cert-watcher настроен"
+    log "✅ caddy-cert-watcher configured"
   fi
 
 else
-  # Standalone Hy2: получаем собственный ACME-сертификат
-  # ВАЖНО: порт 80 должен быть свободен для ACME challenge
+  # Standalone Hy2: obtain its own ACME certificate
+  # IMPORTANT: port 80 must be free for ACME challenge
   cat >> /etc/hysteria/config.yaml << HYACMEEOF
 acme:
   domains:
@@ -307,11 +307,11 @@ quic:
   disablePathMTUDiscovery: false
 HYBWEOF
 
-log "✅ Конфиг /etc/hysteria/config.yaml создан"
+log "✅ Config /etc/hysteria/config.yaml created"
 
 # ══════════════════════════════════════════════════════
 step 6
-log "▶ Systemd сервис Hysteria..."
+log "▶ Systemd service for Hysteria..."
 # ══════════════════════════════════════════════════════
 
 if [[ "$USE_CADDY_CERT" == "1" ]]; then
@@ -329,7 +329,7 @@ Documentation=https://v2.hysteria.network/
 ${HY_AFTER}
 ${HY_WANTS}
 Requires=network-online.target
-# StartLimit* должны быть в [Unit], а не в [Service] (systemd warning)
+# StartLimit* must be in [Unit], not in [Service] (systemd warning)
 StartLimitIntervalSec=60s
 StartLimitBurst=3
 
@@ -354,11 +354,11 @@ HYSVCEOF
 systemctl daemon-reload
 systemctl enable hysteria-server >/dev/null 2>&1 || true
 
-log "✅ Systemd сервис создан"
+log "✅ Systemd service created"
 
 # ══════════════════════════════════════════════════════
 step 7
-log "▶ Запуск Hysteria2..."
+log "▶ Starting Hysteria2..."
 # ══════════════════════════════════════════════════════
 
 systemctl restart hysteria-server 2>&1 || true
@@ -366,19 +366,19 @@ systemctl restart hysteria-server 2>&1 || true
 for i in $(seq 1 20); do
   STATUS=$(systemctl is-active hysteria-server 2>/dev/null || echo "unknown")
   if [[ "$STATUS" == "active" ]]; then
-    log "✅ Hysteria2 запущена (${i}с)"
+    log "✅ Hysteria2 started (${i}s)"
     break
   elif [[ "$STATUS" == "failed" ]]; then
-    log "⚠ hysteria-server: failed — смотрите ниже:"
+    log "⚠ hysteria-server: failed — see below:"
     journalctl -u hysteria-server -n 20 --no-pager 2>/dev/null || true
-    log "  Попытка рестарта..."
+    log "  Attempting restart..."
     systemctl reset-failed hysteria-server 2>/dev/null || true
     systemctl start hysteria-server 2>/dev/null || true
     break
   fi
   sleep 1
   if [[ $i -eq 20 ]]; then
-    log "⚠ Hy2 не запустилась за 20с. Команда для диагностики:"
+    log "⚠ Hy2 did not start within 20s. Diagnostic command:"
     log "  journalctl -u hysteria-server -n 50 --no-pager"
   fi
 done
@@ -386,8 +386,8 @@ done
 step DONE
 log ""
 log "╔════════════════════════════════════════════════════╗"
-log "║   ✅ Hysteria2 успешно установлен!                 ║"
-log "║   Домен: ${DOMAIN}"
+log "║   ✅ Hysteria2 successfully installed!            ║"
+log "║   Domain: ${DOMAIN}"
 log "║   hysteria2://****@${DOMAIN}:443?sni=${DOMAIN}"
 log "╚════════════════════════════════════════════════════╝"
 log ""
