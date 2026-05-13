@@ -22,10 +22,10 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 3000;
-// LISTEN_HOST: 0.0.0.0 (по умолчанию — публично) | 127.0.0.1 (SSH-only режим).
-// Управляется через Environment=LISTEN_HOST=... в systemd-юните или
-// --env LISTEN_HOST=... в PM2. Дефолт сохраняет обратную совместимость
-// со всеми существующими установками.
+// LISTEN_HOST: 0.0.0.0 (default — public) | 127.0.0.1 (SSH-only mode).
+// Controlled via Environment=LISTEN_HOST=... in systemd unit or
+// --env LISTEN_HOST=... in PM2. Default maintains backward compatibility
+// with all existing installations.
 const LISTEN_HOST = process.env.LISTEN_HOST || '0.0.0.0';
 const DATA_DIR = path.join(__dirname, '../data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
@@ -34,7 +34,7 @@ const SECRET_FILE = path.join(DATA_DIR, '.session_secret');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-// ─── Session secret (персистентный, генерится при первом запуске) ───
+// ─── Session secret (persistent, generated on first run) ───
 let SESSION_SECRET;
 try {
   SESSION_SECRET = fs.readFileSync(SECRET_FILE, 'utf8').trim();
@@ -66,7 +66,7 @@ function loadConfig() {
   }
   try {
     const raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-    // Миграция со старого формата (только Naive)
+    // Migration from old format (Naive only)
     if (!raw.stack) {
       raw.stack = { naive: !!raw.installed, hy2: false };
       raw.naiveUsers = raw.proxyUsers || raw.naiveUsers || [];
@@ -77,22 +77,22 @@ function loadConfig() {
     if (!Array.isArray(raw.naiveUsers)) raw.naiveUsers = [];
     if (!Array.isArray(raw.hy2Users)) raw.hy2Users = [];
 
-    // Миграция: если panelDomain не записан в config, но в Caddyfile есть
-    // второй site-блок для поддомена с reverse_proxy на 127.0.0.1 — вытащим его.
-    // Это спасает установки, сделанные до того, как install.sh начал писать
-    // panelDomain в config.json (коммит 0c0c204 и ранее).
+    // Migration: if panelDomain is not written in config, but Caddyfile has
+    // a second site block for a subdomain with reverse_proxy to 127.0.0.1 — extract it.
+    // This saves installations made before install.sh started writing
+    // panelDomain into config.json (commit 0c0c204 and earlier).
     if (!raw.panelDomain) {
       try {
         const caddyfile = fs.readFileSync('/etc/caddy/Caddyfile', 'utf8');
-        // Ищем блок вида: "somesubdomain.example.com {\n  tls ...\n  ...\n  reverse_proxy 127.0.0.1:..."
+        // Look for a block like: "somesubdomain.example.com {\n  tls ...\n  ...\n  reverse_proxy 127.0.0.1:..."
         const m = caddyfile.match(/\n(\S+)\s*\{\s*\n\s*tls\s+(\S+)\s*\n[^}]*reverse_proxy\s+127\.0\.0\.1/);
         if (m && m[1] && m[1] !== raw.domain && m[1].includes('.')) {
           raw.panelDomain = m[1];
           raw.panelEmail = m[2] || raw.email;
           fs.writeFileSync(CONFIG_FILE, JSON.stringify(raw, null, 2));
-          console.log('[migrate] panelDomain восстановлен из Caddyfile:', raw.panelDomain);
+          console.log('[migrate] panelDomain restored from Caddyfile:', raw.panelDomain);
         }
-      } catch (_) { /* Caddyfile может отсутствовать — ничего страшного */ }
+      } catch (_) { /* Caddyfile may be missing — no problem */ }
     }
 
     return raw;
@@ -131,7 +131,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // за Nginx-прокси http — cookie передаётся ок
+    secure: false, // behind Nginx proxy http — cookie is transmitted ok
     httpOnly: true,
     sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000
@@ -161,21 +161,21 @@ function isValidPassword(s) {
     && /^[A-Za-z0-9!@#$%^&*_+\-=.,~]+$/.test(s);
 }
 
-// Срок действия пользователя: 0 = бессрочно, иначе число дней (1..3650)
+// User expiration: 0 = unlimited, otherwise number of days (1..3650)
 function isValidExpireDays(n) {
   if (n === undefined || n === null || n === '' || n === 0 || n === '0') return true;
   const v = parseInt(n, 10);
   return Number.isFinite(v) && v >= 1 && v <= 3650;
 }
 
-// Вычислить дату окончания (ISO) от now + days. days<=0 → null (бессрочно)
+// Calculate expiration date (ISO) from now + days. days<=0 → null (unlimited)
 function computeExpiresAt(days) {
   const d = parseInt(days, 10);
   if (!Number.isFinite(d) || d <= 0) return null;
   return new Date(Date.now() + d * 86400 * 1000).toISOString();
 }
 
-// Истёк ли пользователь?
+// Has the user expired?
 function isExpired(user) {
   if (!user || !user.expiresAt) return false;
   const t = Date.parse(user.expiresAt);
@@ -183,7 +183,7 @@ function isExpired(user) {
   return Date.now() >= t;
 }
 
-// Оставшиеся секунды до истечения (для UI)
+// Remaining seconds until expiration (for UI)
 function remainingSeconds(user) {
   if (!user || !user.expiresAt) return null;
   const t = Date.parse(user.expiresAt);
@@ -196,12 +196,12 @@ function remainingSeconds(user) {
 // ═══════════════════════════════════════════════════════════
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body || {};
-  if (!username || !password) return res.json({ success: false, message: 'Заполните все поля' });
+  if (!username || !password) return res.json({ success: false, message: 'Fill in all fields' });
   const users = loadUsers();
   const user = users[username];
-  if (!user) return res.json({ success: false, message: 'Неверный логин или пароль' });
+  if (!user) return res.json({ success: false, message: 'Invalid username or password' });
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.json({ success: false, message: 'Неверный логин или пароль' });
+    return res.json({ success: false, message: 'Invalid username or password' });
   }
   req.session.authenticated = true;
   req.session.username = username;
@@ -219,17 +219,17 @@ app.get('/api/me', requireAuth, (req, res) => {
 
 app.post('/api/config/change-password', requireAuth, (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
-  if (!currentPassword || !newPassword) return res.json({ success: false, message: 'Заполните все поля' });
-  if (newPassword.length < 6) return res.json({ success: false, message: 'Новый пароль минимум 6 символов' });
+  if (!currentPassword || !newPassword) return res.json({ success: false, message: 'Fill in all fields' });
+  if (newPassword.length < 6) return res.json({ success: false, message: 'New password must be at least 6 characters' });
   const users = loadUsers();
   const user = users[req.session.username];
-  if (!user) return res.json({ success: false, message: 'Пользователь не найден' });
+  if (!user) return res.json({ success: false, message: 'User not found' });
   if (!bcrypt.compareSync(currentPassword, user.password)) {
-    return res.json({ success: false, message: 'Текущий пароль неверен' });
+    return res.json({ success: false, message: 'Current password is incorrect' });
   }
   user.password = bcrypt.hashSync(newPassword, 10);
   saveUsers(users);
-  res.json({ success: true, message: 'Пароль успешно изменён' });
+  res.json({ success: true, message: 'Password changed successfully' });
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -239,8 +239,8 @@ app.get('/api/config', requireAuth, (req, res) => {
   res.json(loadConfig());
 });
 
-// Динамическая версия панели — читается из /etc/rixxx-panel/version (обновляется update.sh).
-// Fallback: '1.0.0' если файл недоступен (например, на dev-окружении или сразу после установки).
+// Dynamic panel version — read from /etc/rixxx-panel/version (updated by update.sh).
+// Fallback: '1.0.0' if file is unavailable (e.g., in dev environment or right after installation).
 app.get('/api/system/version', requireAuth, (req, res) => {
   const VERSION_FILE = '/etc/rixxx-panel/version';
   const FALLBACK = '1.0.0';
@@ -251,7 +251,7 @@ app.get('/api/system/version', requireAuth, (req, res) => {
         return res.json({ version: v, source: 'file' });
       }
     }
-  } catch (_) { /* ignore — отдадим fallback */ }
+  } catch (_) { /* ignore — return fallback */ }
   res.json({ version: FALLBACK, source: 'fallback' });
 });
 
@@ -297,22 +297,22 @@ app.post('/api/service/:kind/:action', requireAuth, (req, res) => {
     if (code !== 0) {
       return res.json({ success: false, message: `${unit} ${action} failed (code ${code})` });
     }
-    // Даём сервису 1.5с подняться, потом проверяем реальный статус
+    // Give the service 1.5s to come up, then check the actual status
     setTimeout(() => {
       checkServiceActive(unit).then(active => {
         res.json({
           success: true,
           active,
           message: active
-            ? `${unit} ${action} — сервис активен`
-            : `${unit} ${action} — команда принята (сервис ещё стартует)`
+            ? `${unit} ${action} — service is active`
+            : `${unit} ${action} — command accepted (service still starting)`
         });
       }).catch(() => {
         res.json({ success: true, active: null, message: `${unit} ${action} OK` });
       });
     }, 1500);
   });
-  p.on('error', () => res.json({ success: false, message: 'systemctl недоступен' }));
+  p.on('error', () => res.json({ success: false, message: 'systemctl unavailable' }));
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -320,14 +320,14 @@ app.post('/api/service/:kind/:action', requireAuth, (req, res) => {
 // ═══════════════════════════════════════════════════════════
 function writeCaddyfile(cfg) {
   if (!cfg.stack.naive || !cfg.domain) return false;
-  // Фильтруем истёкших пользователей — их basic_auth не попадёт в Caddyfile (подключиться не смогут)
+  // Filter out expired users — their basic_auth will not appear in Caddyfile (they won't be able to connect)
   const lines = (cfg.naiveUsers || [])
     .filter(u => !isExpired(u))
     .map(u => `    basic_auth ${u.username} ${u.password}`)
     .join('\n');
 
-  // КРИТИЧНО: если Hy2 тоже установлен — отключаем HTTP/3 в Caddy,
-  // иначе он займёт UDP/443 и Hy2 не запустится.
+  // CRITICAL: if Hy2 is also installed — disable HTTP/3 in Caddy,
+  // otherwise it will occupy UDP/443 and Hy2 will not start.
   const disableH3 = cfg.stack && cfg.stack.hy2;
   const globalBlock = disableH3
     ? `{
@@ -340,8 +340,8 @@ function writeCaddyfile(cfg) {
   order forward_proxy before file_server
 }`;
 
-  // Маскировка: local → file_server, mirror → reverse_proxy <url>.
-  // Если masqueradeMode не задан (старая установка) — оставляем file_server (дефолт).
+  // Masquerade: local → file_server, mirror → reverse_proxy <url>.
+  // If masqueradeMode is not set (old installation) — keep file_server (default).
   const masqueradeBlock = (cfg.masqueradeMode === 'mirror' && cfg.masqueradeUrl)
     ? `  reverse_proxy ${cfg.masqueradeUrl} {
     header_up Host {upstream_hostport}
@@ -350,7 +350,7 @@ function writeCaddyfile(cfg) {
     root /var/www/html
   }`;
 
-  // Основной site-блок: домен прокси
+  // Main site block: proxy domain
   let content = `${globalBlock}
 
 :443, ${cfg.domain} {
@@ -367,13 +367,13 @@ ${masqueradeBlock}
 }
 `;
 
-  // Второй site-блок: панель на отдельном поддомене (ACCESS_MODE=3).
-  // ОБЯЗАТЕЛЬНО сохраняем этот блок при любой перегенерации Caddyfile,
-  // иначе после добавления юзеров Naive панель перестанет отвечать по HTTPS.
-  // panelDomain/panelEmail записываются install.sh при установке в режиме 3.
+  // Second site block: panel on a separate subdomain (ACCESS_MODE=3).
+  // MUST keep this block on any regeneration of Caddyfile,
+  // otherwise after adding Naive users the panel will stop responding over HTTPS.
+  // panelDomain/panelEmail are written by install.sh in mode 3.
   //
-  // ИСКЛЮЧЕНИЕ: SSH-only режим (cfg.sshOnly === 1) — panel-блок НЕ добавляем,
-  // т.к. панель доступна только через SSH-туннель на 127.0.0.1.
+  // EXCEPTION: SSH-only mode (cfg.sshOnly === 1) — do NOT add panel block,
+  // because the panel is only accessible via SSH tunnel on 127.0.0.1.
   const internalPort = process.env.PORT || 3000;
   if (cfg.panelDomain && cfg.panelDomain !== cfg.domain && cfg.sshOnly !== 1) {
     const panelEmail = cfg.panelEmail || cfg.email;
@@ -386,50 +386,50 @@ ${cfg.panelDomain} {
 `;
   }
 
-  // ── Атомарная запись с валидацией и rollback (PR #4) ──
-  // Проблема: если writeFileSync прервётся посередине или сгенерируется
-  // невалидный Caddyfile, мы оставим систему в полуразобранном состоянии —
-  // panel-блок может пропасть, и панель станет недоступна.
+  // ── Atomic write with validation and rollback (PR #4) ──
+  // Problem: if writeFileSync is interrupted midway or an invalid Caddyfile is generated,
+  // we leave the system in a half-broken state — the panel block may disappear,
+  // making the panel inaccessible.
   //
-  // Решение:
-  //   1. Бэкап текущего Caddyfile в /etc/caddy/Caddyfile.last (atomic via rename).
-  //   2. Запись нового конфига во временный файл /etc/caddy/Caddyfile.new.
-  //   3. Валидация через `caddy validate` (если caddy установлен).
-  //   4. Если валидно — atomic rename .new → Caddyfile.
-  //   5. Если невалидно — удаляем .new, бэкап остался нетронутым, возврат false.
-  //   6. На любой ошибке записи восстанавливаем из .last (rollback).
+  // Solution:
+  //   1. Backup current Caddyfile to /etc/caddy/Caddyfile.last (atomic via rename).
+  //   2. Write new config to temporary file /etc/caddy/Caddyfile.new.
+  //   3. Validate via `caddy validate` (if caddy is installed).
+  //   4. If valid — atomic rename .new → Caddyfile.
+  //   5. If invalid — delete .new, backup remains untouched, return false.
+  //   6. On any write error, restore from .last (rollback).
   const targetPath = '/etc/caddy/Caddyfile';
   const tmpPath = '/etc/caddy/Caddyfile.new';
   const backupPath = '/etc/caddy/Caddyfile.last';
   try {
-    // 1) Бэкап (best-effort: если файла ещё нет — это первичная установка).
+    // 1) Backup (best-effort: if the file does not exist yet — this is a fresh install).
     if (fs.existsSync(targetPath)) {
       try { fs.copyFileSync(targetPath, backupPath); } catch (e) { /* best-effort */ }
     }
-    // 2) Запись во временный файл.
+    // 2) Write to temporary file.
     fs.writeFileSync(tmpPath, content, 'utf8');
-    // 3) Валидация через caddy validate (если caddy доступен).
+    // 3) Validate via caddy validate (if caddy is available).
     try {
       const { execSync } = require('child_process');
       execSync(`caddy validate --config ${tmpPath}`, { stdio: 'pipe', timeout: 10000 });
     } catch (validateErr) {
-      // caddy либо не установлен, либо validate упал.
-      // Если ошибка — НЕ stderr пустой → это реальная невалидность.
+      // caddy either not installed, or validate failed.
+      // If there is error and stderr is not empty → actual invalidity.
       const stderr = (validateErr && validateErr.stderr) ? validateErr.stderr.toString() : '';
       if (stderr && /error|adapt|parse/i.test(stderr)) {
         console.error('[writeCaddyfile] caddy validate failed, keeping previous Caddyfile:', stderr.slice(0, 500));
         try { fs.unlinkSync(tmpPath); } catch {}
         return false;
       }
-      // Иначе (caddy не установлен, ENOENT и т.п.) — пропускаем валидацию,
-      // продолжаем atomic rename (валидность подтвердится при reload).
+      // Otherwise (caddy not installed, ENOENT, etc.) — skip validation,
+      // continue with atomic rename (validity will be confirmed on reload).
     }
-    // 4) Atomic rename — на ext4/xfs это атомарная операция.
+    // 4) Atomic rename — on ext4/xfs this is an atomic operation.
     fs.renameSync(tmpPath, targetPath);
     return true;
   } catch (e) {
     console.error('Caddyfile write error:', e.message);
-    // Rollback: если временный файл остался — удаляем; если бэкап есть — восстанавливаем.
+    // Rollback: if temporary file remains — delete; if backup exists — restore.
     try { if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath); } catch {}
     try {
       if (fs.existsSync(backupPath) && !fs.existsSync(targetPath)) {
@@ -467,13 +467,13 @@ app.get('/api/naive/users', requireAuth, (req, res) => {
 
 app.post('/api/naive/users', requireAuth, async (req, res) => {
   const { username, password, expireDays } = req.body || {};
-  if (!isValidUsername(username)) return res.json({ success: false, message: 'Логин 1-32 симв. (A-Z, a-z, 0-9, . _ -)' });
-  if (!isValidPassword(password)) return res.json({ success: false, message: 'Пароль 8-128 символов (без пробелов)' });
-  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Срок: 1..3650 дней или 0 (бессрочно)' });
+  if (!isValidUsername(username)) return res.json({ success: false, message: 'Username 1-32 chars (A-Z, a-z, 0-9, . _ -)' });
+  if (!isValidPassword(password)) return res.json({ success: false, message: 'Password 8-128 chars (no spaces)' });
+  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Duration: 1..3650 days or 0 (unlimited)' });
 
   const cfg = loadConfig();
   if (cfg.naiveUsers.find(u => u.username === username)) {
-    return res.json({ success: false, message: 'Пользователь уже существует' });
+    return res.json({ success: false, message: 'User already exists' });
   }
   const expiresAt = computeExpiresAt(expireDays);
   cfg.naiveUsers.push({ username, password, createdAt: new Date().toISOString(), expiresAt });
@@ -497,7 +497,7 @@ app.delete('/api/naive/users/:username', requireAuth, async (req, res) => {
   const cfg = loadConfig();
   const before = cfg.naiveUsers.length;
   cfg.naiveUsers = cfg.naiveUsers.filter(u => u.username !== username);
-  if (cfg.naiveUsers.length === before) return res.json({ success: false, message: 'Не найден' });
+  if (cfg.naiveUsers.length === before) return res.json({ success: false, message: 'Not found' });
   saveConfig(cfg);
   if (cfg.installed && cfg.stack.naive) {
     writeCaddyfile(cfg);
@@ -506,15 +506,15 @@ app.delete('/api/naive/users/:username', requireAuth, async (req, res) => {
   res.json({ success: true });
 });
 
-// Продлить/изменить срок: { expireDays: N } (0 = бессрочно, N>0 = now + N дней)
+// Extend/change expiration: { expireDays: N } (0 = unlimited, N>0 = now + N days)
 app.patch('/api/naive/users/:username', requireAuth, async (req, res) => {
   const { username } = req.params;
   const { expireDays } = req.body || {};
-  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Срок: 1..3650 дней или 0' });
+  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Duration: 1..3650 days or 0' });
 
   const cfg = loadConfig();
   const user = cfg.naiveUsers.find(u => u.username === username);
-  if (!user) return res.json({ success: false, message: 'Не найден' });
+  if (!user) return res.json({ success: false, message: 'Not found' });
   user.expiresAt = computeExpiresAt(expireDays);
   saveConfig(cfg);
 
@@ -526,17 +526,17 @@ app.patch('/api/naive/users/:username', requireAuth, async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════
-//  IP BYPASS (RU direct) — общий список для ACL Hy2
+//  IP BYPASS (RU direct) — common list for Hy2 ACL
 // ═══════════════════════════════════════════════════════════
 const BYPASS_FILE    = path.join(DATA_DIR, 'bypass.json');
 const HY2_ACL_PATH   = '/etc/hysteria/bypass-ru.acl';
 
-// Список сервисов, которые блокируют иностранные IP — их лучше пускать напрямую.
-// Обновляется пользователем через API /api/bypass.
+// List of services that block foreign IPs — it's better to route them directly.
+// Updated by the user via /api/bypass.
 function loadBypass() {
   try {
     if (!fs.existsSync(BYPASS_FILE)) {
-      // Дефолт — пусто, т.е. bypass выключен
+      // Default — empty, i.e. bypass disabled
       const d = { enabled: false, cidrs: [], source: '', updatedAt: null };
       fs.writeFileSync(BYPASS_FILE, JSON.stringify(d, null, 2));
       return d;
@@ -552,18 +552,18 @@ function saveBypass(b) {
   fs.writeFileSync(BYPASS_FILE, JSON.stringify(b, null, 2));
 }
 
-// Применяет ACL bypass к переданному Hysteria-конфигу (in-place).
-// Hysteria2 ACL синтаксис: "<action>(<arg>) <target>". Используем direct(0) для IP-сетей.
-// Файл: по одной строке; записываем только при наличии активного bypass.
+// Applies the bypass ACL to the passed Hysteria config (in-place).
+// Hysteria2 ACL syntax: "<action>(<arg>) <target>". We use direct(0) for IP networks.
+// File: one line per entry; write only when bypass is active.
 function applyBypassAcl(base, cfg) {
   const b = loadBypass();
   if (!b.enabled || !Array.isArray(b.cidrs) || b.cidrs.length === 0) {
-    // выключено — удаляем из конфига acl, если там был наш файл
+    // disabled — remove acl from config if it was our file
     if (base.acl && base.acl.file === HY2_ACL_PATH) delete base.acl;
     try { if (fs.existsSync(HY2_ACL_PATH)) fs.unlinkSync(HY2_ACL_PATH); } catch {}
     return;
   }
-  // Пишем ACL-файл
+  // Write ACL file
   try {
     fs.mkdirSync(path.dirname(HY2_ACL_PATH), { recursive: true });
     const lines = b.cidrs
@@ -584,13 +584,13 @@ app.get('/api/bypass', requireAuth, (req, res) => {
     count:   (b.cidrs || []).length,
     source:  b.source || '',
     updatedAt: b.updatedAt || null,
-    // первые 50 строк для предпросмотра
+    // first 50 lines for preview
     preview: (b.cidrs || []).slice(0, 50)
   });
 });
 
-// Загрузка списка: принимает либо { cidrs: ["1.2.3.0/24", ...] },
-// либо { json: { "service.ru": ["1.2.3.0/24", ...], ... } } (формат пользовательского файла)
+// Upload list: accepts either { cidrs: ["1.2.3.0/24", ...] },
+// or { json: { "service.ru": ["1.2.3.0/24", ...], ... } } (user file format)
 app.post('/api/bypass', requireAuth, async (req, res) => {
   const { cidrs, json, enabled, source } = req.body || {};
   const b = loadBypass();
@@ -607,7 +607,7 @@ app.post('/api/bypass', requireAuth, async (req, res) => {
   }
 
   if (newList) {
-    // Валидация CIDR — оставляем только корректные
+    // CIDR validation — keep only valid ones
     const re = /^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$|^[0-9a-fA-F:]+\/\d{1,3}$/;
     b.cidrs = newList.map(s => String(s).trim()).filter(s => re.test(s));
     b.source = typeof source === 'string' ? source.slice(0, 128) : b.source;
@@ -617,7 +617,7 @@ app.post('/api/bypass', requireAuth, async (req, res) => {
 
   saveBypass(b);
 
-  // Применяем немедленно, если Hy2 установлен
+  // Apply immediately if Hy2 is installed
   const cfg = loadConfig();
   if (cfg.installed && cfg.stack.hy2) {
     writeHysteriaConfig(cfg);
@@ -643,7 +643,7 @@ function writeHysteriaConfig(cfg) {
   if (!cfg.stack.hy2 || !cfg.domain) return false;
 
   const userpass = {};
-  // Фильтруем истёкших пользователей — их не будет в userpass (подключиться не смогут)
+  // Filter out expired users — they will not be in userpass (they won't be able to connect)
   (cfg.hy2Users || []).forEach(u => {
     if (u.username && u.password && !isExpired(u)) userpass[u.username] = u.password;
   });
@@ -653,8 +653,8 @@ function writeHysteriaConfig(cfg) {
 
   const hyCfgPath = '/etc/hysteria/config.yaml';
 
-  // Читаем существующий конфиг и ОБНОВЛЯЕМ только секцию auth.
-  // Это критично: TLS/ACME/masquerade/quic секции должны сохраняться!
+  // Read existing config and UPDATE only the auth section.
+  // This is critical: TLS/ACME/masquerade/quic sections must be preserved!
   let base = null;
   try {
     const raw = fs.readFileSync(hyCfgPath, 'utf8');
@@ -664,14 +664,14 @@ function writeHysteriaConfig(cfg) {
   }
 
   if (base && typeof base === 'object') {
-    // Только обновляем userpass — TLS/ACME/QUIC секции должны сохраняться!
+    // Only update userpass — TLS/ACME/QUIC sections must be preserved!
     if (!base.auth) base.auth = { type: 'userpass' };
     base.auth.type = 'userpass';
     base.auth.userpass = userpass;
 
-    // Masquerade: переписываем секцию ТОЛЬКО если в config.json явно задан режим.
-    // Если masqueradeMode не указан (старая установка) — masquerade не трогаем,
-    // чтобы не сломать существующую конфигурацию.
+    // Masquerade: rewrite the section ONLY if the mode is explicitly set in config.json.
+    // If masqueradeMode is not specified (old installation) — do not touch masquerade,
+    // so as not to break the existing configuration.
     if (cfg.masqueradeMode === 'mirror' && cfg.masqueradeUrl) {
       base.masquerade = {
         type: 'proxy',
@@ -683,13 +683,13 @@ function writeHysteriaConfig(cfg) {
         file: { dir: '/var/www/html' }
       };
     }
-    // ACL bypass (русские сервисы идут direct, минуя VPN): подставляем, если настроен
+    // ACL bypass (Russian services go direct, bypassing VPN): include if configured
     applyBypassAcl(base, cfg);
   } else {
-    // Файла нет или повреждён — создаём минимальный.
-    // Пытаемся найти сертификат Caddy через find (любой CA, новый или старый путь).
-    // Если не нашли — НЕ включаем ACME fallback (чтобы не сжечь LE rate limit 429),
-    // оставляем конфиг без TLS — Hy2 не стартует, пока админ вручную не допишет tls.
+    // File missing or corrupt — create a minimal one.
+    // Try to find Caddy certificate via find (any CA, new or old path).
+    // If not found — do NOT enable ACME fallback (so as not to burn LE rate limit 429),
+    // leave config without TLS — Hy2 will not start until admin manually adds tls.
     console.warn('[writeHysteriaConfig] /etc/hysteria/config.yaml not found — creating minimal config.');
     let tlsBlock = null;
     try {
@@ -712,7 +712,7 @@ function writeHysteriaConfig(cfg) {
       }
     } catch (e) { /* ignore */ }
 
-    // Masquerade: учитываем выбор пользователя (по умолчанию — local).
+    // Masquerade: respect user choice (default is local).
     const masqueradeBlock = (cfg.masqueradeMode === 'mirror' && cfg.masqueradeUrl)
       ? { type: 'proxy', proxy: { url: cfg.masqueradeUrl, rewriteHost: true } }
       : { type: 'file', file: { dir: '/var/www/html' } };
@@ -736,21 +736,20 @@ function writeHysteriaConfig(cfg) {
     applyBypassAcl(base, cfg);
   }
 
-  // ── Атомарная запись с валидацией и rollback (PR #4) ──
-  // Та же стратегия, что и в writeCaddyfile: temp → validate → atomic rename.
-  // Валидация: пробуем yaml.load() обратно; если падает — это означает
-  // что мы сами породили невалидный YAML (баг в коде), сохраняем старый.
+  // ── Atomic write with validation and rollback (PR #4) ──
+  // Same strategy as in writeCaddyfile: temp → validate → atomic rename.
+  // Validation: try yaml.load() back; if it fails — it means we generated invalid YAML (bug in code), keep old one.
   const tmpPath = hyCfgPath + '.new';
   const backupPath = hyCfgPath + '.last';
   try {
     const newContent = yaml.dump(base, { lineWidth: 120, quotingType: '"' });
-    // 1) Бэкап (best-effort).
+    // 1) Backup (best-effort).
     if (fs.existsSync(hyCfgPath)) {
       try { fs.copyFileSync(hyCfgPath, backupPath); } catch (e) { /* best-effort */ }
     }
-    // 2) Запись во временный файл.
+    // 2) Write to temporary file.
     fs.writeFileSync(tmpPath, newContent, 'utf8');
-    // 3) Self-validate: парсим обратно.
+    // 3) Self-validate: parse back.
     try {
       const reparsed = yaml.load(newContent);
       if (!reparsed || typeof reparsed !== 'object' || !reparsed.auth) {
@@ -792,13 +791,13 @@ app.get('/api/hy2/users', requireAuth, (req, res) => {
 
 app.post('/api/hy2/users', requireAuth, async (req, res) => {
   const { username, password, expireDays } = req.body || {};
-  if (!isValidUsername(username)) return res.json({ success: false, message: 'Логин 1-32 символа' });
-  if (!isValidPassword(password)) return res.json({ success: false, message: 'Пароль 8-128 символов' });
-  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Срок: 1..3650 дней или 0 (бессрочно)' });
+  if (!isValidUsername(username)) return res.json({ success: false, message: 'Username 1-32 characters' });
+  if (!isValidPassword(password)) return res.json({ success: false, message: 'Password 8-128 characters' });
+  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Duration: 1..3650 days or 0 (unlimited)' });
 
   const cfg = loadConfig();
   if (cfg.hy2Users.find(u => u.username === username)) {
-    return res.json({ success: false, message: 'Пользователь уже существует' });
+    return res.json({ success: false, message: 'User already exists' });
   }
   const expiresAt = computeExpiresAt(expireDays);
   cfg.hy2Users.push({ username, password, createdAt: new Date().toISOString(), expiresAt });
@@ -821,7 +820,7 @@ app.delete('/api/hy2/users/:username', requireAuth, async (req, res) => {
   const cfg = loadConfig();
   const before = cfg.hy2Users.length;
   cfg.hy2Users = cfg.hy2Users.filter(u => u.username !== username);
-  if (cfg.hy2Users.length === before) return res.json({ success: false, message: 'Не найден' });
+  if (cfg.hy2Users.length === before) return res.json({ success: false, message: 'Not found' });
   saveConfig(cfg);
   if (cfg.installed && cfg.stack.hy2) {
     writeHysteriaConfig(cfg);
@@ -830,15 +829,15 @@ app.delete('/api/hy2/users/:username', requireAuth, async (req, res) => {
   res.json({ success: true });
 });
 
-// Продлить/изменить срок Hy2: { expireDays: N }
+// Extend/change Hy2 expiration: { expireDays: N }
 app.patch('/api/hy2/users/:username', requireAuth, async (req, res) => {
   const { username } = req.params;
   const { expireDays } = req.body || {};
-  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Срок: 1..3650 дней или 0' });
+  if (!isValidExpireDays(expireDays)) return res.json({ success: false, message: 'Duration: 1..3650 days or 0' });
 
   const cfg = loadConfig();
   const user = cfg.hy2Users.find(u => u.username === username);
-  if (!user) return res.json({ success: false, message: 'Не найден' });
+  if (!user) return res.json({ success: false, message: 'Not found' });
   user.expiresAt = computeExpiresAt(expireDays);
   saveConfig(cfg);
 
@@ -864,13 +863,13 @@ app.get('/api/logs/:kind', requireAuth, (req, res) => {
   if (!unit) return res.status(400).json({ error: 'bad kind' });
 
   if (kind === 'panel') {
-    // PM2 logs (panel сам себя)
+    // PM2 logs (panel itself)
     const p = spawn('pm2', ['logs', 'panel-naive-hy2', '--lines', String(lines), '--nostream', '--raw']);
     let out = '';
     p.stdout.on('data', d => out += d.toString());
     p.stderr.on('data', d => out += d.toString());
     p.on('close', () => res.json({ unit: 'pm2', output: out || '(no logs)' }));
-    p.on('error', () => res.json({ unit: 'pm2', output: 'pm2 недоступен' }));
+    p.on('error', () => res.json({ unit: 'pm2', output: 'pm2 unavailable' }));
     return;
   }
 
@@ -878,15 +877,15 @@ app.get('/api/logs/:kind', requireAuth, (req, res) => {
   let out = '';
   p.stdout.on('data', d => out += d.toString());
   p.on('close', () => res.json({ unit, output: out || '(no logs)' }));
-  p.on('error', () => res.json({ unit, output: 'journalctl недоступен' }));
+  p.on('error', () => res.json({ unit, output: 'journalctl unavailable' }));
 });
 
-// Диагностика портов: что слушает 443/tcp и 443/udp + сертификаты
+// Port diagnostics: what listens on 443/tcp and 443/udp + certificates
 app.get('/api/diag/ports', requireAuth, (req, res) => {
   const p = spawn('bash', ['-c',
-    'echo "=== TCP/443 (Naive/Caddy) ==="; (ss -tlnp 2>/dev/null | grep -E ":443 " || echo "(никто не слушает)"); ' +
-    'echo ""; echo "=== UDP/443 (Hysteria2) ==="; (ss -ulnp 2>/dev/null | grep -E ":443 " || echo "(никто не слушает)"); ' +
-    'echo ""; echo "=== Статус сервисов ==="; ' +
+    'echo "=== TCP/443 (Naive/Caddy) ==="; (ss -tlnp 2>/dev/null | grep -E ":443 " || echo "(nobody listening)"); ' +
+    'echo ""; echo "=== UDP/443 (Hysteria2) ==="; (ss -ulnp 2>/dev/null | grep -E ":443 " || echo "(nobody listening)"); ' +
+    'echo ""; echo "=== Service status ==="; ' +
     'echo "caddy:            $(systemctl is-active caddy 2>/dev/null || echo unknown)"; ' +
     'echo "hysteria-server:  $(systemctl is-active hysteria-server 2>/dev/null || echo unknown)"; ' +
     'echo ""; echo "=== Hysteria TLS ==="; ' +
@@ -898,64 +897,64 @@ app.get('/api/diag/ports', requireAuth, (req, res) => {
     '    echo "TLS mode: shared (Caddy cert)"; ' +
     '    echo "cert: $TLS_CERT"; ' +
     '    if [ -f "$TLS_CERT" ]; then echo "  └─ exists ✓ ($(stat -c %s "$TLS_CERT") bytes, perms $(stat -c %a "$TLS_CERT"))"; ' +
-    '    else echo "  └─ FILE MISSING ✗ (Hy2 не сможет загрузиться!)"; fi; ' +
+    '    else echo "  └─ FILE MISSING ✗ (Hy2 will not start!)"; fi; ' +
     '    echo "key:  $TLS_KEY"; ' +
     '    if [ -f "$TLS_KEY" ]; then echo "  └─ exists ✓ (perms $(stat -c %a "$TLS_KEY"))"; ' +
     '    else echo "  └─ FILE MISSING ✗"; fi; ' +
     '  elif [ "$ACME_ON" -gt 0 ]; then ' +
-    '    echo "TLS mode: ACME (Hy2 сам получает cert)"; ' +
-    '    echo "(убедитесь что порт 80/tcp свободен или что cert уже получен)"; ' +
-    '  else echo "TLS: НЕ НАСТРОЕН в конфиге ✗"; fi; ' +
-    'else echo "/etc/hysteria/config.yaml не найден"; fi; ' +
+    '    echo "TLS mode: ACME (Hy2 obtains cert itself)"; ' +
+    '    echo "(make sure port 80/tcp is free or that the cert is already obtained)"; ' +
+    '  else echo "TLS: NOT CONFIGURED in config ✗"; fi; ' +
+    'else echo "/etc/hysteria/config.yaml not found"; fi; ' +
     'echo ""; echo "=== Masquerade ==="; ' +
     'if [ -f /etc/hysteria/config.yaml ]; then ' +
     '  MASQ_TYPE=$(awk "/^masquerade:/{f=1;next} f && /^[^ ]/{f=0} f && /type:/{print \\$2; exit}" /etc/hysteria/config.yaml); ' +
-    '  echo "type: ${MASQ_TYPE:-(не задано)}"; ' +
+    '  echo "type: ${MASQ_TYPE:-(not set)}"; ' +
     'fi'
   ]);
   let out = '';
   p.stdout.on('data', d => out += d.toString());
   p.on('close', () => res.json({ output: out }));
-  p.on('error', () => res.json({ output: 'команды недоступны' }));
+  p.on('error', () => res.json({ output: 'commands unavailable' }));
 });
 
-// Просмотр активного hysteria config.yaml (с маскировкой паролей)
+// View active hysteria config.yaml (with password masking)
 app.get('/api/diag/hysteria-config', requireAuth, (req, res) => {
   const cfgPath = '/etc/hysteria/config.yaml';
   if (!fs.existsSync(cfgPath)) {
-    return res.json({ exists: false, output: '/etc/hysteria/config.yaml не найден' });
+    return res.json({ exists: false, output: '/etc/hysteria/config.yaml not found' });
   }
   try {
     let raw = fs.readFileSync(cfgPath, 'utf8');
-    // Маскируем пароли userpass
+    // Mask userpass passwords
     raw = raw.replace(/(\s+)([a-zA-Z0-9_.-]+)(:\s*)"[^"]+"/g,
       (m, sp, user, col) => `${sp}${user}${col}"***masked***"`);
     res.json({ exists: true, output: raw });
   } catch (e) {
-    res.json({ exists: false, output: 'Ошибка чтения: ' + e.message });
+    res.json({ exists: false, output: 'Read error: ' + e.message });
   }
 });
 
 // ═══════════════════════════════════════════════════════════
-//  HY2 TLS AUTO-FIX (заменяет acme: на tls: с путями к Caddy cert)
+//  HY2 TLS AUTO-FIX (replaces acme: with tls: using paths to Caddy cert)
 // ═══════════════════════════════════════════════════════════
-// Частая проблема: при установке Caddy получил серт от ZeroSSL, install.sh
-// искал только по пути Let's Encrypt, не нашёл → прописал acme: в Hy2 конфиге →
-// Hy2 попытался получить свой серт LE → HTTP 429 rate limit на неделю.
-// Этот endpoint находит фактический серт Caddy через find и переписывает
-// секцию TLS Hy2 конфига.
+// Common problem: during installation Caddy got a cert from ZeroSSL, install.sh
+// looked only for Let's Encrypt path, didn't find it → wrote acme: in Hy2 config →
+// Hy2 tried to obtain its own LE cert → HTTP 429 rate limit for a week.
+// This endpoint finds the actual Caddy cert via find and rewrites
+// the TLS section of the Hy2 config.
 app.post('/api/diag/fix-hy2-tls', requireAuth, async (req, res) => {
   try {
     const cfg = loadConfig();
     if (!cfg.stack || !cfg.stack.hy2) {
-      return res.status(400).json({ ok: false, error: 'Hy2 не установлен' });
+      return res.status(400).json({ ok: false, error: 'Hy2 not installed' });
     }
     const domain = cfg.domain;
     if (!domain) {
-      return res.status(400).json({ ok: false, error: 'Домен не задан в config' });
+      return res.status(400).json({ ok: false, error: 'Domain not set in config' });
     }
 
-    // Ищем cert по всем возможным путям и CA
+    // Search for cert in all possible paths and CAs
     const roots = [
       '/var/lib/caddy/.local/share/caddy/certificates',
       '/root/.local/share/caddy/certificates'
@@ -983,12 +982,12 @@ app.post('/api/diag/fix-hy2-tls', requireAuth, async (req, res) => {
     if (!certPath) {
       return res.status(404).json({
         ok: false,
-        error: 'Сертификат Caddy не найден на диске',
-        hint: 'Caddy должен получить сертификат (проверьте: systemctl status caddy; journalctl -u caddy -n 50)'
+        error: 'Caddy certificate not found on disk',
+        hint: 'Caddy must obtain a certificate (check: systemctl status caddy; journalctl -u caddy -n 50)'
       });
     }
 
-    // Ставим права чтоб Hy2 мог читать
+    // Set permissions so Hy2 can read
     try {
       require('child_process').execSync(
         `chmod -R 755 "${path.dirname(path.dirname(path.dirname(certPath)))}" 2>/dev/null; ` +
@@ -998,33 +997,33 @@ app.post('/api/diag/fix-hy2-tls', requireAuth, async (req, res) => {
       );
     } catch {}
 
-    // Читаем config.yaml
+    // Read config.yaml
     const hyCfgPath = '/etc/hysteria/config.yaml';
     let hyCfg = {};
     if (fs.existsSync(hyCfgPath)) {
       hyCfg = yaml.load(fs.readFileSync(hyCfgPath, 'utf8')) || {};
     }
 
-    // Убираем acme: секцию, вставляем tls:
+    // Remove acme: section, insert tls:
     delete hyCfg.acme;
     hyCfg.tls = { cert: certPath, key: keyPath };
 
-    // Пишем обратно
+    // Write back
     fs.writeFileSync(hyCfgPath, yaml.dump(hyCfg, { lineWidth: 120, quotingType: '"' }), 'utf8');
 
-    // Сбрасываем счётчик рестартов и перезапускаем Hy2
+    // Reset restart counter and restart Hy2
     const { execSync } = require('child_process');
     try { execSync('systemctl reset-failed hysteria-server 2>/dev/null'); } catch {}
     try { execSync('systemctl restart hysteria-server'); } catch (e) {
       return res.status(500).json({
         ok: false,
-        error: 'Конфиг обновлён, но hysteria-server не перезапустился',
+        error: 'Config updated, but hysteria-server failed to restart',
         details: e.message,
         certPath, keyPath, ca
       });
     }
 
-    // Проверяем что стартовал
+    // Check if it started
     await new Promise(r => setTimeout(r, 2500));
     let active = false;
     try { active = execSync('systemctl is-active hysteria-server').toString().trim() === 'active'; } catch {}
@@ -1032,8 +1031,8 @@ app.post('/api/diag/fix-hy2-tls', requireAuth, async (req, res) => {
     res.json({
       ok: active,
       message: active
-        ? `Hy2 TLS починен — cert от ${ca}, сервис запущен`
-        : `Конфиг обновлён, но сервис не активен. journalctl -u hysteria-server -n 30`,
+        ? `Hy2 TLS fixed — cert from ${ca}, service started`
+        : `Config updated, but service is not active. journalctl -u hysteria-server -n 30`,
       certPath, keyPath, ca
     });
   } catch (e) {
@@ -1068,7 +1067,7 @@ app.get('/api/tuning/status', requireAuth, (req, res) => {
       udpBufOk: Number(parsed.rmem_max || 0) >= 16777216
     });
   });
-  p.on('error', () => res.json({ error: 'sysctl недоступен' }));
+  p.on('error', () => res.json({ error: 'sysctl unavailable' }));
 });
 
 app.post('/api/tuning/apply', requireAuth, (req, res) => {
@@ -1088,7 +1087,7 @@ app.post('/api/tuning/apply', requireAuth, (req, res) => {
 //  INSTALL VIA WEBSOCKET
 // ═══════════════════════════════════════════════════════════
 wss.on('connection', (ws, req) => {
-  // Минимальная защита: проверим session cookie
+  // Minimal protection: check session cookie
   const cookie = (req.headers.cookie || '');
   if (!cookie.includes('rixxx_sid=')) {
     ws.send(JSON.stringify({ type: 'error', message: 'unauthorized' }));
@@ -1115,15 +1114,15 @@ function sendLog(ws, text, step = null, progress = null, level = 'info') {
 
 function parseLogLine(line) {
   const stepMap = [
-    { p: /STEP:1/,    step: 'update',    progress: 8,  text: '📦 Обновление системы...' },
-    { p: /STEP:2/,    step: 'bbr',       progress: 15, text: '⚡ BBR + UDP тюнинг...' },
-    { p: /STEP:3/,    step: 'firewall',  progress: 22, text: '🛡 Файрволл...' },
-    { p: /STEP:4/,    step: 'dl',        progress: 35, text: '📥 Загрузка бинарника...' },
-    { p: /STEP:5/,    step: 'build',     progress: 60, text: '🔨 Сборка / настройка...' },
-    { p: /STEP:6/,    step: 'config',    progress: 75, text: '📝 Конфигурация...' },
-    { p: /STEP:7/,    step: 'service',   progress: 85, text: '⚙ Systemd сервис...' },
-    { p: /STEP:8/,    step: 'start',     progress: 93, text: '🟢 Запуск...' },
-    { p: /STEP:DONE/, step: 'done',      progress: 100, text: '✅ Готово!' },
+    { p: /STEP:1/,    step: 'update',    progress: 8,  text: '📦 Updating system...' },
+    { p: /STEP:2/,    step: 'bbr',       progress: 15, text: '⚡ BBR + UDP tuning...' },
+    { p: /STEP:3/,    step: 'firewall',  progress: 22, text: '🛡 Firewall...' },
+    { p: /STEP:4/,    step: 'dl',        progress: 35, text: '📥 Downloading binary...' },
+    { p: /STEP:5/,    step: 'build',     progress: 60, text: '🔨 Building / configuring...' },
+    { p: /STEP:6/,    step: 'config',    progress: 75, text: '📝 Configuration...' },
+    { p: /STEP:7/,    step: 'service',   progress: 85, text: '⚙ Systemd service...' },
+    { p: /STEP:8/,    step: 'start',     progress: 93, text: '🟢 Starting...' },
+    { p: /STEP:DONE/, step: 'done',      progress: 100, text: '✅ Done!' },
   ];
   for (const s of stepMap) {
     if (s.p.test(line)) return { text: s.text, step: s.step, progress: s.progress, level: 'step' };
@@ -1137,7 +1136,7 @@ function parseLogLine(line) {
 function runScript(ws, scriptName, env, onExit) {
   const scriptPath = path.join(__dirname, '../scripts', scriptName);
   if (!fs.existsSync(scriptPath)) {
-    sendLog(ws, `❌ Скрипт ${scriptName} не найден!`, null, null, 'error');
+    sendLog(ws, `❌ Script ${scriptName} not found!`, null, null, 'error');
     ws.send(JSON.stringify({ type: 'install_error', message: scriptName + ' not found' }));
     return;
   }
@@ -1161,7 +1160,7 @@ function runScript(ws, scriptName, env, onExit) {
   });
 }
 
-// Helper: вытянуть server_ip в конфиг
+// Helper: pull server_ip into config
 function persistServerIp(cfg) {
   const p = spawn('bash', ['-c', "curl -4 -s --connect-timeout 5 ifconfig.me 2>/dev/null || hostname -I | awk '{print $1}'"]);
   let ip = '';
@@ -1177,10 +1176,10 @@ function persistServerIp(cfg) {
 
 function handleInstallNaive(ws, data) {
   const { domain, email, login, password } = data;
-  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный домен' }));
-  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный email' }));
-  if (!isValidUsername(login)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный логин' }));
-  if (!isValidPassword(password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Пароль минимум 8 символов' }));
+  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid domain' }));
+  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid email' }));
+  if (!isValidUsername(login)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid username' }));
+  if (!isValidPassword(password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Password must be at least 8 characters' }));
 
   const cfg = loadConfig();
   cfg.domain = domain;
@@ -1192,7 +1191,7 @@ function handleInstallNaive(ws, data) {
   saveConfig(cfg);
   persistServerIp(cfg);
 
-  sendLog(ws, '🚀 Запуск установки NaiveProxy...', 'init', 2, 'info');
+  sendLog(ws, '🚀 Starting NaiveProxy installation...', 'init', 2, 'info');
   runScript(ws, 'install_naiveproxy.sh', {
     NAIVE_DOMAIN: domain, NAIVE_EMAIL: email,
     NAIVE_LOGIN: login, NAIVE_PASSWORD: password
@@ -1200,7 +1199,7 @@ function handleInstallNaive(ws, data) {
     if (code === 0) {
       cfg.installed = true;
       saveConfig(cfg);
-      sendLog(ws, '✅ NaiveProxy готов!', 'done', 100, 'success');
+      sendLog(ws, '✅ NaiveProxy ready!', 'done', 100, 'success');
       ws.send(JSON.stringify({
         type: 'install_done',
         links: {
@@ -1215,9 +1214,9 @@ function handleInstallNaive(ws, data) {
 
 function handleInstallHy2(ws, data) {
   const { domain, email, password, useCaddyCert } = data;
-  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный домен' }));
-  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный email' }));
-  if (!isValidPassword(password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Пароль минимум 8 символов' }));
+  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid domain' }));
+  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid email' }));
+  if (!isValidPassword(password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Password must be at least 8 characters' }));
 
   const cfg = loadConfig();
   cfg.domain = domain;
@@ -1231,7 +1230,7 @@ function handleInstallHy2(ws, data) {
   saveConfig(cfg);
   persistServerIp(cfg);
 
-  sendLog(ws, '⚡ Запуск установки Hysteria2...', 'init', 2, 'info');
+  sendLog(ws, '⚡ Starting Hysteria2 installation...', 'init', 2, 'info');
   runScript(ws, 'install_hysteria.sh', {
     HY_DOMAIN: domain, HY_EMAIL: email, HY_PASSWORD: password,
     USE_CADDY_CERT: useCaddyCert ? '1' : '0'
@@ -1239,7 +1238,7 @@ function handleInstallHy2(ws, data) {
     if (code === 0) {
       cfg.installed = true;
       saveConfig(cfg);
-      sendLog(ws, '✅ Hysteria2 готова!', 'done', 100, 'success');
+      sendLog(ws, '✅ Hysteria2 ready!', 'done', 100, 'success');
       ws.send(JSON.stringify({
         type: 'install_done',
         links: {
@@ -1254,11 +1253,11 @@ function handleInstallHy2(ws, data) {
 
 function handleInstallBoth(ws, data) {
   const { domain, email, naiveLogin, naivePassword, hy2Password } = data;
-  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный домен' }));
-  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный email' }));
-  if (!isValidUsername(naiveLogin)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Неверный Naive логин' }));
-  if (!isValidPassword(naivePassword)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Naive пароль 8+ символов' }));
-  if (!isValidPassword(hy2Password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Hy2 пароль 8+ символов' }));
+  if (!isValidDomain(domain)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid domain' }));
+  if (!isValidEmail(email)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid email' }));
+  if (!isValidUsername(naiveLogin)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Invalid Naive username' }));
+  if (!isValidPassword(naivePassword)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Naive password must be 8+ characters' }));
+  if (!isValidPassword(hy2Password)) return ws.send(JSON.stringify({ type: 'install_error', message: 'Hy2 password must be 8+ characters' }));
 
   const cfg = loadConfig();
   cfg.domain = domain;
@@ -1274,18 +1273,18 @@ function handleInstallBoth(ws, data) {
   saveConfig(cfg);
   persistServerIp(cfg);
 
-  sendLog(ws, '🚀 Установка Naive + Hy2 последовательно...', 'init', 2, 'info');
+  sendLog(ws, '🚀 Installing Naive + Hy2 sequentially...', 'init', 2, 'info');
 
   runScript(ws, 'install_naiveproxy.sh', {
     NAIVE_DOMAIN: domain, NAIVE_EMAIL: email,
     NAIVE_LOGIN: naiveLogin, NAIVE_PASSWORD: naivePassword,
-    WITH_HY2: '1'  // отключит HTTP/3 в Caddy → UDP/443 свободен для Hy2
+    WITH_HY2: '1'  // disables HTTP/3 in Caddy → UDP/443 free for Hy2
   }, (codeNaive) => {
     if (codeNaive !== 0) {
       ws.send(JSON.stringify({ type: 'install_error', message: `Naive failed: ${codeNaive}` }));
       return;
     }
-    sendLog(ws, '✅ Naive ок, запускаю Hy2...', null, 50, 'success');
+    sendLog(ws, '✅ Naive OK, launching Hy2...', null, 50, 'success');
     runScript(ws, 'install_hysteria.sh', {
       HY_DOMAIN: domain, HY_EMAIL: email, HY_PASSWORD: hy2Password,
       USE_CADDY_CERT: '1'
@@ -1293,7 +1292,7 @@ function handleInstallBoth(ws, data) {
       if (codeHy === 0) {
         cfg.installed = true;
         saveConfig(cfg);
-        sendLog(ws, '✅ Оба протокола готовы!', 'done', 100, 'success');
+        sendLog(ws, '✅ Both protocols ready!', 'done', 100, 'success');
         ws.send(JSON.stringify({
           type: 'install_done',
           links: {
@@ -1309,7 +1308,7 @@ function handleInstallBoth(ws, data) {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  EXPIRE CHECKER — каждые 5 минут фильтрует истёкших и релоадит сервисы
+//  EXPIRE CHECKER — every 5 minutes filters expired users and reloads services
 // ═══════════════════════════════════════════════════════════
 let _lastExpireSig = '';
 async function expireChecker() {
@@ -1317,7 +1316,7 @@ async function expireChecker() {
     const cfg = loadConfig();
     if (!cfg.installed) return;
 
-    // Сигнатура «кто истёк» — чтобы не релоадить без причины
+    // Signature of "who expired" — to avoid unnecessary reloads
     const sig = JSON.stringify([
       (cfg.naiveUsers || []).filter(isExpired).map(u => u.username).sort(),
       (cfg.hy2Users   || []).filter(isExpired).map(u => u.username).sort()
@@ -1329,7 +1328,7 @@ async function expireChecker() {
     const hy2Expired   = (cfg.hy2Users   || []).filter(isExpired).length;
     if (naiveExpired === 0 && hy2Expired === 0) return;
 
-    console.log(`[expire-check] naive=${naiveExpired} hy2=${hy2Expired} — обновляю конфиги`);
+    console.log(`[expire-check] naive=${naiveExpired} hy2=${hy2Expired} — updating configs`);
     if (cfg.stack.naive && naiveExpired > 0) {
       writeCaddyfile(cfg);
       await reloadCaddy();
@@ -1343,7 +1342,7 @@ async function expireChecker() {
   }
 }
 setInterval(expireChecker, 5 * 60 * 1000);
-setTimeout(expireChecker, 20 * 1000); // первый запуск через 20 сек после старта
+setTimeout(expireChecker, 20 * 1000); // first run 20 seconds after start
 
 // ─── SPA fallback ─────────────────────────────────────────
 app.get(/^(?!\/api).*/, (req, res) => {
@@ -1356,7 +1355,7 @@ server.listen(PORT, LISTEN_HOST, () => {
   console.log(`║   Panel Naive + Hysteria2 by RIXXX            ║`);
   console.log(`║   Running on http://${LISTEN_HOST}:${PORT}${' '.repeat(Math.max(0, 14 - LISTEN_HOST.length))}║`);
   if (isLocal) {
-    console.log(`║   SSH-only mode (доступ через ssh -L)         ║`);
+    console.log(`║   SSH-only mode (access via ssh -L)           ║`);
   }
   console.log(`╚═══════════════════════════════════════════════╝\n`);
 });
