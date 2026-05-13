@@ -1,5 +1,3 @@
-**پست اول (ادامه در پست بعد)**
-
 
 # Panel Naive + Hysteria2 by RIXXX
 
@@ -96,10 +94,8 @@ The LE certificate will be issued automatically on the first request to the doma
 
 ---
 
-ادامه در پست بعد
-```
 
-**پست دوم (ادامه از پست قبل - ادامه در پست بعد)**
+
 
 
 ## 🎭 Domain masquerade
@@ -233,13 +229,6 @@ The script automatically detects the architecture and downloads the appropriate 
 naive+https://LOGIN:PASSWORD@your.domain.com:443
 hysteria2://PASSWORD@your.domain.com:443?sni=your.domain.com
 ```
-
----
-
-ادامه در پست بعد
-```
-
-**پست سوم (ادامه از پست قبل)**
 
 
 ## ⚙️ Management
