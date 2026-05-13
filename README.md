@@ -1,6 +1,6 @@
 **پست اول (ادامه در پست بعد)**
 
-```markdown
+
 # Panel Naive + Hysteria2 by RIXXX
 
 > Web panel for quick installation and management of **NaiveProxy** and **Hysteria2** on a single VPS — in **2 clicks**
@@ -8,9 +8,9 @@
 ---
 
 ## 🚀 Quick installation
-
+```markdown
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-Hy2---by---RIXXX/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/install.sh)
 ```
 
 After installation, the panel will be available at:
@@ -449,9 +449,9 @@ If problems are found, a **specific error** and a hint are displayed: `bash upda
 ---
 
 ## 🚀 نصب سریع
-
+```markdown
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-Hy2---by---RIXXX/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/install.sh)
 ```
 
 بعد از نصب، پنل در آدرس زیر در دسترس است:
