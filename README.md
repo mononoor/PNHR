@@ -8,8 +8,8 @@
 ---
 
 ## 🚀 Quick installation
-```markdown
-```bash
+
+```
 bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/install.sh)
 ```
 
@@ -26,8 +26,8 @@ http://YOUR_SERVER_IP:3000
 
 To apply new patches (improvements, new options) **without a full reinstall**, use `update.sh`:
 
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-Hy2---by---RIXXX/main/update.sh)
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/update.sh)
 ```
 
 **What the script does:**
@@ -37,7 +37,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-H
 - ✅ Safe to run repeatedly (idempotent — already applied migrations are skipped)
 
 **Useful flags:**
-```bash
+```
 bash update.sh --dry-run               # show what would be done, make no changes
 bash update.sh --force                 # re-run migrations even if version matches
 bash update.sh --expose <panel.domain> # restore public access to the panel after SSH-only
@@ -72,7 +72,7 @@ If you answer `y`:
 
 **Access from your local machine:**
 
-```bash
+```
 # 1) Open an SSH tunnel (keep the terminal open)
 ssh -L 8080:127.0.0.1:3000 root@YOUR_SERVER_IP
 
@@ -82,7 +82,7 @@ http://localhost:8080
 
 **What to do if you need to restore public access:**
 
-```bash
+```
 bash update.sh --expose panel.yourdomain.com
 ```
 
@@ -101,7 +101,7 @@ The LE certificate will be issued automatically on the first request to the doma
 
 **پست دوم (ادامه از پست قبل - ادامه در پست بعد)**
 
-```markdown
+
 ## 🎭 Domain masquerade
 
 Masquerade is what a random visitor sees when they open the domain in a browser (HTTPS) or what a third-party client sees when it sends a request to UDP/443 without proper authentication. The goal is to make the server look like an ordinary website, not a VPN endpoint.
@@ -136,7 +136,7 @@ Your choice [1/2, default 1]:
 
 **Change masquerade on an existing installation:**
 
-```bash
+```
 bash update.sh --masquerade
 ```
 
@@ -241,10 +241,10 @@ hysteria2://PASSWORD@your.domain.com:443?sni=your.domain.com
 
 **پست سوم (ادامه از پست قبل)**
 
-```markdown
+
 ## ⚙️ Management
 
-```bash
+```
 # Panel
 pm2 status
 pm2 logs panel-naive-hy2
@@ -327,7 +327,7 @@ If something is wrong — go there first.
 
 One command shows the entire installation state — patch version, service status (caddy/hysteria/panel), TLS certificates and their expiration, open ports, masquerade mode, and panel access mode:
 
-```bash
+```
 sudo bash update.sh --status
 # or without root at all (read-only):
 bash update.sh --status
@@ -356,7 +356,7 @@ Example output:
 
 If something breaks (e.g., Caddyfile corrupted by manual edits, or the panel stops responding), this command regenerates `Caddyfile` and `/etc/hysteria/config.yaml` **from `config.json`**, without touching users, domains, and certificates:
 
-```bash
+```
 sudo bash update.sh --repair
 ```
 
@@ -435,13 +435,13 @@ If problems are found, a **specific error** and a hint are displayed: `bash upda
 - BBR + UDP tuning
 
 ---
-
+```
 *by RIXXX — multi-protocol proxy panel with a user-friendly interface*
 ```
 
 
 --------------------------------------
-```markdown
+
 # پنل Naive + Hysteria2 اثر RIXXX
 
 > پنل وب برای نصب و مدیریت سریع **NaiveProxy** و **Hysteria2** روی یک VPS — در **۲ کلیک**
@@ -449,8 +449,8 @@ If problems are found, a **specific error** and a hint are displayed: `bash upda
 ---
 
 ## 🚀 نصب سریع
-```markdown
-```bash
+
+```
 bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/install.sh)
 ```
 
@@ -467,8 +467,8 @@ http://IP_سرور_شما:3000
 
 برای اعمال وصله‌های جدید (بهبودها، گزینه‌های جدید) **بدون نصب مجدد کامل** از `update.sh` استفاده کنید:
 
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-Hy2---by---RIXXX/main/update.sh)
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/mononoor/PNHR/main/update.sh)
 ```
 
 **کارهایی که اسکریپت انجام می‌دهد:**
@@ -478,7 +478,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/cwash797-cmd/Panel---Naive-H
 - ✅ اجرای مجدد بی‌خطر است (idempotent — مهاجرت‌های قبلی تکرار نمی‌شوند)
 
 **پرچم‌های مفید:**
-```bash
+```
 bash update.sh --dry-run               # نشان می‌دهد چه کاری انجام می‌شود، هیچ تغییری اعمال نمی‌کند
 bash update.sh --force                 # مهاجرت‌ها را حتی اگر نسخه یکی باشد دوباره اجرا می‌کند
 bash update.sh --expose <panel.domain> # برگرداندن دسترسی عمومی به پنل بعد از حالت SSH-only
@@ -513,7 +513,7 @@ bash update.sh --help                  # راهنما
 
 **دسترسی از ماشین محلی:**
 
-```bash
+```
 # ۱) باز کردن تونل SSH (ترمینال را باز نگه دارید)
 ssh -L 8080:127.0.0.1:3000 root@IP_سرور_شما
 
@@ -523,7 +523,7 @@ http://localhost:8080
 
 **اگر نیاز به بازگرداندن دسترسی عمومی دارید:**
 
-```bash
+```
 bash update.sh --expose panel.yourdomain.com
 ```
 
@@ -571,7 +571,7 @@ bash update.sh --expose panel.yourdomain.com
 
 **تغییر پنهان‌سازی روی نصب موجود:**
 
-```bash
+```
 bash update.sh --masquerade
 ```
 
@@ -678,7 +678,7 @@ hysteria2://PASSWORD@your.domain.com:443?sni=your.domain.com
 
 ## ⚙️ مدیریت
 
-```bash
+```
 # پنل
 pm2 status
 pm2 logs panel-naive-hy2
@@ -761,7 +761,7 @@ journalctl -u hysteria-server -f
 
 یک دستور وضعیت کامل نصب را نشان می‌دهد — نسخه وصله، وضعیت سرویس‌ها (caddy/hysteria/panel)، گواهی‌های TLS و تاریخ انقضای آنها، پورت‌های باز، حالت پنهان‌سازی و حالت دسترسی به پنل:
 
-```bash
+```
 sudo bash update.sh --status
 # یا بدون root (فقط خواندنی):
 bash update.sh --status
@@ -790,7 +790,7 @@ bash update.sh --status
 
 اگر چیزی خراب شد (مثلاً Caddyfile با ویرایش دستی خراب شده، یا پنل پاسخ نمی‌دهد)، این دستور `Caddyfile` و `/etc/hysteria/config.yaml` را **از روی `config.json`** بازتولید می‌کند، بدون اینکه به کاربران، دامنه‌ها و گواهی‌ها دست بزند:
 
-```bash
+```
 sudo bash update.sh --repair
 ```
 
@@ -869,6 +869,6 @@ sudo bash update.sh --repair
 - BBR + تنظیم UDP
 
 ---
-
+```
 *توسط RIXXX — پنل پروکسی چندپروتکلی با رابط کاربری آسان*
 ```
