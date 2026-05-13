@@ -14,7 +14,7 @@ DOMAIN="${NAIVE_DOMAIN:-}"
 EMAIL="${NAIVE_EMAIL:-}"
 LOGIN="${NAIVE_LOGIN:-}"
 PASSWORD="${NAIVE_PASSWORD:-}"
-WITH_HY2="${WITH_HY2:-0}"  # 1 = отключить HTTP/3 в Caddy чтобы освободить UDP/443 для Hy2
+WITH_HY2="${WITH_HY2:-0}"  # 1 = disable HTTP/3 in Caddy to free UDP/443 for Hy2
 
 if [[ -z "$DOMAIN" || -z "$EMAIL" || -z "$LOGIN" || -z "$PASSWORD" ]]; then
   echo "ERROR: missing env NAIVE_DOMAIN/NAIVE_EMAIL/NAIVE_LOGIN/NAIVE_PASSWORD"
@@ -24,7 +24,7 @@ fi
 log()  { echo "$1"; }
 step() { echo "STEP:$1"; }
 
-# ── Определяем архитектуру ─────────────────────────────
+# ── Detect architecture ─────────────────────────────
 case "$(uname -m)" in
   x86_64)  GO_ARCH="amd64"  ;;
   aarch64) GO_ARCH="arm64"  ;;
@@ -35,7 +35,7 @@ log "  Arch: $(uname -m) → Go:${GO_ARCH}"
 
 # ══════════════════════════════════════════════════════
 step 1
-log "▶ Обновление системы и установка зависимостей..."
+log "▶ Updating system and installing dependencies..."
 # ══════════════════════════════════════════════════════
 
 systemctl stop unattended-upgrades 2>/dev/null || true
@@ -61,11 +61,11 @@ apt-get install -y -qq \
   -o DPkg::Lock::Timeout=120 \
   curl wget git openssl ufw build-essential libcap2-bin 2>/dev/null || true
 
-log "✅ Система обновлена"
+log "✅ System updated"
 
 # ══════════════════════════════════════════════════════
 step 2
-log "▶ Включение BBR..."
+log "▶ Enabling BBR..."
 # ══════════════════════════════════════════════════════
 
 cat > /etc/sysctl.d/99-rixxx-tune.conf << 'SYSCTLEOF'
@@ -79,11 +79,11 @@ net.ipv4.tcp_fastopen=3
 SYSCTLEOF
 sysctl --system >/dev/null 2>&1 || true
 
-log "✅ BBR включён"
+log "✅ BBR enabled"
 
 # ══════════════════════════════════════════════════════
 step 3
-log "▶ Настройка файрволла UFW..."
+log "▶ Configuring UFW firewall..."
 # ══════════════════════════════════════════════════════
 
 ufw allow 22/tcp  >/dev/null 2>&1 || true
@@ -91,11 +91,11 @@ ufw allow 80/tcp  >/dev/null 2>&1 || true
 ufw allow 443/tcp >/dev/null 2>&1 || true
 ufw allow 443/udp >/dev/null 2>&1 || true
 echo "y" | ufw enable >/dev/null 2>&1 || ufw --force enable >/dev/null 2>&1 || true
-log "✅ Файрволл настроен (22, 80, 443/tcp+udp)"
+log "✅ Firewall configured (22, 80, 443/tcp+udp)"
 
 # ══════════════════════════════════════════════════════
 step 4
-log "▶ Установка Go (arch: ${GO_ARCH})..."
+log "▶ Installing Go (arch: ${GO_ARCH})..."
 # ══════════════════════════════════════════════════════
 
 rm -rf /usr/local/go
@@ -108,13 +108,13 @@ for attempt in 1 2 3; do
 done
 [[ -z "$GO_VERSION" || "$GO_VERSION" != go* ]] && GO_VERSION="go1.22.5"
 
-log "  Загружаем ${GO_VERSION}.linux-${GO_ARCH}..."
+log "  Downloading ${GO_VERSION}.linux-${GO_ARCH}..."
 wget -q --timeout=180 \
   "https://go.dev/dl/${GO_VERSION}.linux-${GO_ARCH}.tar.gz" \
   -O /tmp/go.tar.gz
 
 if [[ ! -s /tmp/go.tar.gz ]]; then
-  log "ERROR: Не удалось загрузить Go"
+  log "ERROR: Failed to download Go"
   exit 1
 fi
 
@@ -131,11 +131,11 @@ grep -q "/usr/local/go/bin" /root/.profile 2>/dev/null || {
 }
 
 GO_VER=$(/usr/local/go/bin/go version 2>/dev/null || echo "unknown")
-log "✅ Go установлен: $GO_VER"
+log "✅ Go installed: $GO_VER"
 
 # ══════════════════════════════════════════════════════
 step 5
-log "▶ Сборка Caddy с naive-плагином (займёт 3-7 минут)..."
+log "▶ Building Caddy with naive plugin (takes 3-7 minutes)..."
 # ══════════════════════════════════════════════════════
 
 export GOPATH=/root/go
@@ -145,17 +145,17 @@ export TMPDIR=/root/tmp
 export GOPROXY=https://proxy.golang.org,direct
 mkdir -p /root/tmp /root/go
 
-log "  Установка xcaddy..."
+log "  Installing xcaddy..."
 /usr/local/go/bin/go install \
   github.com/caddyserver/xcaddy/cmd/xcaddy@latest \
   2>&1 | grep -v "^$" | tail -3
 
 if [[ ! -f /root/go/bin/xcaddy ]]; then
-  log "ERROR: xcaddy не установился"
+  log "ERROR: xcaddy did not install"
   exit 1
 fi
 
-log "  Сборка Caddy + forwardproxy@naive..."
+log "  Building Caddy + forwardproxy@naive..."
 cd /root
 rm -f /root/caddy
 
@@ -166,7 +166,7 @@ rm -f /root/caddy
   done
 
 if [[ ! -f /root/caddy ]]; then
-  log "ERROR: Caddy не был собран! Проверьте интернет."
+  log "ERROR: Caddy was not built! Check your internet."
   exit 1
 fi
 
@@ -175,11 +175,11 @@ chmod +x /usr/bin/caddy
 setcap 'cap_net_bind_service=+ep' /usr/bin/caddy 2>/dev/null || true
 
 CADDY_VER=$(/usr/bin/caddy version 2>/dev/null || echo "unknown")
-log "✅ Caddy собран: $CADDY_VER"
+log "✅ Caddy built: $CADDY_VER"
 
 # ══════════════════════════════════════════════════════
 step 6
-log "▶ Создание конфигурационных файлов..."
+log "▶ Creating configuration files..."
 # ══════════════════════════════════════════════════════
 
 mkdir -p /var/www/html /etc/caddy
@@ -205,7 +205,7 @@ cat > /var/www/html/index.html << 'HTMLEOF'
 </html>
 HTMLEOF
 
-# ВАЖНО: при WITH_HY2=1 отключаем HTTP/3 чтобы UDP/443 был свободен для Hysteria2.
+# IMPORTANT: when WITH_HY2=1, disable HTTP/3 so UDP/443 is free for Hysteria2.
 {
   printf '{\n'
   printf '  order forward_proxy before file_server\n'
@@ -230,14 +230,14 @@ HTMLEOF
 } > /etc/caddy/Caddyfile
 
 if /usr/bin/caddy validate --config /etc/caddy/Caddyfile 2>&1; then
-  log "✅ Caddyfile валиден для $DOMAIN"
+  log "✅ Caddyfile is valid for $DOMAIN"
 else
-  log "⚠ Валидация: предупреждение (продолжаем)"
+  log "⚠ Validation: warning (continuing)"
 fi
 
 # ══════════════════════════════════════════════════════
 step 7
-log "▶ Настройка systemd сервиса..."
+log "▶ Configuring systemd service..."
 # ══════════════════════════════════════════════════════
 
 systemctl stop caddy 2>/dev/null || true
@@ -273,19 +273,19 @@ WantedBy=multi-user.target
 SERVICEEOF
 
 systemctl daemon-reload
-log "✅ Systemd сервис создан"
+log "✅ Systemd service created"
 
 # ══════════════════════════════════════════════════════
 step 8
-log "▶ Включение и запуск Caddy..."
+log "▶ Enabling and starting Caddy..."
 # ══════════════════════════════════════════════════════
 
 systemctl enable caddy 2>&1 || true
 
 if systemctl start caddy 2>&1; then
-  log "  Caddy запускается..."
+  log "  Caddy is starting..."
 else
-  log "⚠ systemctl start fail, fallback в nohup..."
+  log "⚠ systemctl start failed, fallback to nohup..."
   pkill -f "caddy run" 2>/dev/null || true
   sleep 1
   nohup /usr/bin/caddy run --config /etc/caddy/Caddyfile \
@@ -294,23 +294,23 @@ fi
 
 for i in $(seq 1 20); do
   if systemctl is-active --quiet caddy 2>/dev/null; then
-    log "✅ Caddy запущен (через ${i}с)"
+    log "✅ Caddy started (after ${i}s)"
     break
   elif pgrep -x caddy >/dev/null 2>/dev/null; then
-    log "✅ Caddy запущен как процесс (${i}с)"
+    log "✅ Caddy started as a process (${i}s)"
     break
   fi
   sleep 1
   if [[ $i -eq 20 ]]; then
-    log "⚠ Caddy запускается медленно, см.: journalctl -u caddy -n 30"
+    log "⚠ Caddy is starting slowly, see: journalctl -u caddy -n 30"
   fi
 done
 
 step DONE
 log ""
 log "╔════════════════════════════════════════════════════╗"
-log "║   ✅ NaiveProxy успешно установлен!                ║"
-log "║   Домен: ${DOMAIN}"
+log "║   ✅ NaiveProxy successfully installed!           ║"
+log "║   Domain: ${DOMAIN}"
 log "║   naive+https://${LOGIN}:****@${DOMAIN}:443"
 log "╚════════════════════════════════════════════════════╝"
 log ""
