@@ -1,7 +1,7 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════
-#  Сетевой тюнинг (BBR + UDP buffers) — by RIXXX
-#  Вызывается из панели кнопкой "Применить оптимизации"
+#  Network tuning (BBR + UDP buffers) — by RIXXX
+#  Called from the panel by the "Apply optimizations" button
 # ═══════════════════════════════════════════════════════
 
 set -uo pipefail
@@ -11,7 +11,7 @@ cat > /etc/sysctl.d/99-rixxx-tune.conf << 'SYSCTLEOF'
 net.core.default_qdisc=fq
 net.ipv4.tcp_congestion_control=bbr
 
-# UDP буферы для Hysteria2
+# UDP buffers for Hysteria2
 net.core.rmem_max=16777216
 net.core.wmem_max=16777216
 net.core.rmem_default=2500000
@@ -31,7 +31,7 @@ SYSCTLEOF
 if sysctl --system >/dev/null 2>&1; then
   echo "OK: sysctl applied"
 
-  # Проверяем BBR
+  # Check BBR
   CC=$(sysctl -n net.ipv4.tcp_congestion_control 2>/dev/null || echo "unknown")
   QDISC=$(sysctl -n net.core.default_qdisc 2>/dev/null || echo "unknown")
   RMEM=$(sysctl -n net.core.rmem_max 2>/dev/null || echo "unknown")
