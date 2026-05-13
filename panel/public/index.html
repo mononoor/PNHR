@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,20 +42,20 @@
         <div class="logo-sub">Panel by RIXXX</div>
       </div>
     </div>
-    <h2 class="login-heading">Добро пожаловать</h2>
-    <p class="login-desc">Войдите в панель управления</p>
+    <h2 class="login-heading">Welcome</h2>
+    <p class="login-desc">Log in to the control panel</p>
     <div id="loginError" class="alert alert-error hidden"></div>
     <form id="loginForm">
       <div class="form-group">
-        <label class="form-label">Логин</label>
+        <label class="form-label">Username</label>
         <input type="text" id="loginUsername" class="form-input" placeholder="admin" autocomplete="username">
       </div>
       <div class="form-group">
-        <label class="form-label">Пароль</label>
+        <label class="form-label">Password</label>
         <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" autocomplete="current-password">
       </div>
       <button type="submit" class="btn btn-shiny btn-full">
-        <span class="btn-text">Войти</span>
+        <span class="btn-text">Log in</span>
         <span class="btn-loader hidden">
           <svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
@@ -63,7 +63,7 @@
         </span>
       </button>
     </form>
-    <div class="login-hint">По умолчанию: admin / admin</div>
+    <div class="login-hint">Default: admin / admin</div>
   </div>
 </div>
 
@@ -100,31 +100,31 @@
     <nav class="sidebar-nav">
       <a href="#" class="nav-item active" data-page="dashboard">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        <span>Дашборд</span>
+        <span>Dashboard</span>
       </a>
       <a href="#" class="nav-item" data-page="install">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-        <span>Установка</span>
+        <span>Install</span>
       </a>
       <a href="#" class="nav-item" data-page="users">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Пользователи</span>
+        <span>Users</span>
       </a>
       <a href="#" class="nav-item" data-page="tuning">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        <span>Тюнинг</span>
+        <span>Tuning</span>
       </a>
       <a href="#" class="nav-item" data-page="bypass">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="7" cy="6" r="2" fill="currentColor"/><circle cx="17" cy="12" r="2" fill="currentColor"/><circle cx="7" cy="18" r="2" fill="currentColor"/></svg>
-        <span>Bypass (прямой трафик)</span>
+        <span>Bypass (direct traffic)</span>
       </a>
       <a href="#" class="nav-item" data-page="diag">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>Диагностика</span>
+        <span>Diagnostics</span>
       </a>
       <a href="#" class="nav-item" data-page="settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93M12 21v-2M12 5V3"/></svg>
-        <span>Настройки</span>
+        <span>Settings</span>
       </a>
     </nav>
 
@@ -136,7 +136,7 @@
           <div class="user-role">Administrator</div>
         </div>
       </div>
-      <button class="btn-icon logout-btn" id="logoutBtn" title="Выйти">
+      <button class="btn-icon logout-btn" id="logoutBtn" title="Logout">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
     </div>
@@ -148,23 +148,23 @@
     <!-- ────── DASHBOARD PAGE ────── -->
     <div class="page active" id="dashboardPage">
       <div class="page-header">
-        <h1 class="page-title">Дашборд</h1>
+        <h1 class="page-title">Dashboard</h1>
         <div class="page-actions">
           <button class="btn btn-outline btn-sm" id="refreshStatusBtn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Обновить
+            Refresh
           </button>
         </div>
       </div>
 
-      <!-- Общая инфа -->
+      <!-- General info -->
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card">
           <div class="stat-icon domain-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
           <div class="stat-body">
-            <div class="stat-label">Домен</div>
+            <div class="stat-label">Domain</div>
             <div class="stat-value mono" id="serverDomain">—</div>
           </div>
         </div>
@@ -173,7 +173,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <div class="stat-body">
-            <div class="stat-label">IP сервера</div>
+            <div class="stat-label">Server IP</div>
             <div class="stat-value mono" id="serverIp">—</div>
           </div>
         </div>
@@ -182,7 +182,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div class="stat-body">
-            <div class="stat-label">Всего пользователей</div>
+            <div class="stat-label">Total users</div>
             <div class="stat-value" id="totalUsers">0</div>
           </div>
         </div>
@@ -191,13 +191,13 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
           </div>
           <div class="stat-body">
-            <div class="stat-label">Архитектура</div>
+            <div class="stat-label">Architecture</div>
             <div class="stat-value mono" id="serverArch">—</div>
           </div>
         </div>
       </div>
 
-      <!-- Карточки сервисов -->
+      <!-- Service cards -->
       <div class="cards-row">
         <!-- NaiveProxy -->
         <div class="card service-card" id="naiveCard">
@@ -216,28 +216,28 @@
           <div class="card-body">
             <div class="not-installed-msg" id="naiveNotInstalled">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <p>NaiveProxy ещё не установлен</p>
-              <button class="btn btn-shiny" onclick="goToPage('install'); setTimeout(() => switchInstallTab('naive'), 50)">Установить</button>
+              <p>NaiveProxy is not installed yet</p>
+              <button class="btn btn-shiny" onclick="goToPage('install'); setTimeout(() => switchInstallTab('naive'), 50)">Install</button>
             </div>
             <div class="service-installed hidden" id="naiveInstalled">
               <div class="service-stats">
                 <div class="service-stat">
-                  <div class="service-stat-label">Пользователей</div>
+                  <div class="service-stat-label">Users</div>
                   <div class="service-stat-val" id="naiveUsersCount">0</div>
                 </div>
               </div>
               <div class="service-btns">
                 <button class="btn btn-success btn-sm" onclick="serviceAction('naive', 'start')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Старт
+                  Start
                 </button>
                 <button class="btn btn-warning btn-sm" onclick="serviceAction('naive', 'restart')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                  Рестарт
+                  Restart
                 </button>
                 <button class="btn btn-danger btn-sm" onclick="serviceAction('naive', 'stop')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                  Стоп
+                  Stop
                 </button>
               </div>
             </div>
@@ -261,28 +261,28 @@
           <div class="card-body">
             <div class="not-installed-msg" id="hy2NotInstalled">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <p>Hysteria2 ещё не установлен</p>
-              <button class="btn btn-shiny" onclick="goToPage('install'); setTimeout(() => switchInstallTab('hy2'), 50)">Установить</button>
+              <p>Hysteria2 is not installed yet</p>
+              <button class="btn btn-shiny" onclick="goToPage('install'); setTimeout(() => switchInstallTab('hy2'), 50)">Install</button>
             </div>
             <div class="service-installed hidden" id="hy2Installed">
               <div class="service-stats">
                 <div class="service-stat">
-                  <div class="service-stat-label">Пользователей</div>
+                  <div class="service-stat-label">Users</div>
                   <div class="service-stat-val" id="hy2UsersCount">0</div>
                 </div>
               </div>
               <div class="service-btns">
                 <button class="btn btn-success btn-sm" onclick="serviceAction('hy2', 'start')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Старт
+                  Start
                 </button>
                 <button class="btn btn-warning btn-sm" onclick="serviceAction('hy2', 'restart')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                  Рестарт
+                  Restart
                 </button>
                 <button class="btn btn-danger btn-sm" onclick="serviceAction('hy2', 'stop')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                  Стоп
+                  Stop
                 </button>
               </div>
             </div>
@@ -290,14 +290,14 @@
         </div>
       </div>
 
-      <!-- Быстрые ссылки -->
+      <!-- Quick links -->
       <div class="card quick-links-card">
         <div class="card-header">
-          <h3 class="card-title">Быстрые ссылки подключения</h3>
+          <h3 class="card-title">Quick connection links</h3>
         </div>
         <div class="card-body">
           <div class="quick-link-empty" id="quickLinksEmpty">
-            <p>Установите прокси для получения ссылок</p>
+            <p>Install a proxy to get links</p>
           </div>
           <div id="quickLinksList" class="hidden"></div>
         </div>
@@ -307,7 +307,7 @@
     <!-- ────── INSTALL PAGE ────── -->
     <div class="page" id="installPage">
       <div class="page-header">
-        <h1 class="page-title">Установка прокси</h1>
+        <h1 class="page-title">Proxy installation</h1>
       </div>
 
       <!-- Tabs -->
@@ -322,54 +322,54 @@
         </button>
         <button class="tab-btn" data-tab="both" onclick="switchInstallTab('both')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-4.5 4.5 1 6.5L12 17l-5.5 3 1-6.5L3 9l6-1z"/></svg>
-          Оба сразу <span class="badge-recommended">рекомендуется</span>
+          Both at once <span class="badge-recommended">recommended</span>
         </button>
       </div>
 
       <div class="install-layout">
         <div class="card install-form-card">
           <div class="card-header">
-            <h3 class="card-title" id="installFormTitle">Параметры NaiveProxy</h3>
-            <div class="card-badge" id="installStepBadge">Шаг 1 из 1</div>
+            <h3 class="card-title" id="installFormTitle">NaiveProxy parameters</h3>
+            <div class="card-badge" id="installStepBadge">Step 1 of 1</div>
           </div>
           <div class="card-body">
             <div id="installAlert" class="alert hidden"></div>
 
-            <!-- Общие поля -->
+            <!-- Common fields -->
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">
-                  Поддомен (домен)
-                  <span class="form-hint">A-запись должна указывать на IP сервера</span>
+                  Subdomain (domain)
+                  <span class="form-hint">A record must point to the server IP</span>
                 </label>
                 <input type="text" id="installDomain" class="form-input" placeholder="vpn.yourdomain.com">
               </div>
               <div class="form-group">
                 <label class="form-label">
-                  Email для Let's Encrypt
-                  <span class="form-hint">Для SSL сертификата</span>
+                  Email for Let's Encrypt
+                  <span class="form-hint">For SSL certificate</span>
                 </label>
                 <input type="email" id="installEmail" class="form-input" placeholder="you@email.com">
               </div>
             </div>
 
-            <!-- Naive-специфичные поля -->
+            <!-- Naive-specific fields -->
             <div id="naiveFields" class="form-grid">
               <div class="form-group">
                 <label class="form-label">
-                  Логин Naive
-                  <span class="form-hint">Первый пользователь NaiveProxy</span>
+                  Naive username
+                  <span class="form-hint">First NaiveProxy user</span>
                 </label>
                 <input type="text" id="installNaiveLogin" class="form-input" placeholder="mylogin">
               </div>
               <div class="form-group">
                 <label class="form-label">
-                  Пароль Naive
-                  <span class="form-hint">Минимум 8 символов</span>
+                  Naive password
+                  <span class="form-hint">Minimum 8 characters</span>
                 </label>
                 <div class="input-group">
-                  <input type="text" id="installNaivePassword" class="form-input" placeholder="Будет сгенерирован">
-                  <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('installNaivePassword')" title="Сгенерировать">
+                  <input type="text" id="installNaivePassword" class="form-input" placeholder="Will be generated">
+                  <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('installNaivePassword')" title="Generate">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="2" y="2" width="20" height="20" rx="4"/>
                       <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/>
@@ -383,16 +383,16 @@
               </div>
             </div>
 
-            <!-- Hy2-специфичные поля -->
+            <!-- Hy2-specific fields -->
             <div id="hy2Fields" class="form-grid hidden">
               <div class="form-group full-width">
                 <label class="form-label">
-                  Пароль Hysteria2
-                  <span class="form-hint">Одиночный пароль (доп. юзеров добавите потом)</span>
+                  Hysteria2 password
+                  <span class="form-hint">Single password (additional users can be added later)</span>
                 </label>
                 <div class="input-group">
-                  <input type="text" id="installHy2Password" class="form-input" placeholder="Будет сгенерирован">
-                  <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('installHy2Password')" title="Сгенерировать">
+                  <input type="text" id="installHy2Password" class="form-input" placeholder="Will be generated">
+                  <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('installHy2Password')" title="Generate">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="2" y="2" width="20" height="20" rx="4"/>
                       <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/>
@@ -407,13 +407,13 @@
             </div>
 
             <div class="install-note" id="installNote">
-              <strong>ℹ NaiveProxy</strong> — TCP на 443 порту. Маскируется под обычный HTTPS-сайт.
+              <strong>ℹ NaiveProxy</strong> — TCP on port 443. Masquerades as a regular HTTPS website.
             </div>
 
             <div class="form-actions">
               <button class="btn btn-shiny btn-lg" id="startInstallBtn" onclick="startInstall()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                Начать установку
+                Start installation
               </button>
             </div>
           </div>
@@ -422,7 +422,7 @@
         <!-- Progress Panel -->
         <div class="card install-progress-card">
           <div class="card-header">
-            <h3 class="card-title">Прогресс установки</h3>
+            <h3 class="card-title">Installation progress</h3>
             <div class="progress-percent" id="progressPercent">0%</div>
           </div>
           <div class="card-body">
@@ -430,16 +430,16 @@
               <div class="progress-bar" id="progressBar" style="width: 0%"></div>
             </div>
             <div class="install-steps">
-              <div class="install-step" id="step-init" data-step="init"><div class="step-dot"></div><div class="step-label">Инициализация</div></div>
-              <div class="install-step" id="step-update" data-step="update"><div class="step-dot"></div><div class="step-label">Обновление системы</div></div>
-              <div class="install-step" id="step-bbr" data-step="bbr"><div class="step-dot"></div><div class="step-label">BBR + UDP тюнинг</div></div>
-              <div class="install-step" id="step-firewall" data-step="firewall"><div class="step-dot"></div><div class="step-label">Файрволл</div></div>
-              <div class="install-step" id="step-dl" data-step="dl"><div class="step-dot"></div><div class="step-label">Загрузка бинарников</div></div>
-              <div class="install-step" id="step-build" data-step="build"><div class="step-dot"></div><div class="step-label">Сборка / настройка</div></div>
-              <div class="install-step" id="step-config" data-step="config"><div class="step-dot"></div><div class="step-label">Конфигурация</div></div>
-              <div class="install-step" id="step-service" data-step="service"><div class="step-dot"></div><div class="step-label">Systemd сервис</div></div>
-              <div class="install-step" id="step-start" data-step="start"><div class="step-dot"></div><div class="step-label">Запуск</div></div>
-              <div class="install-step" id="step-done" data-step="done"><div class="step-dot"></div><div class="step-label">Готово!</div></div>
+              <div class="install-step" id="step-init" data-step="init"><div class="step-dot"></div><div class="step-label">Initialization</div></div>
+              <div class="install-step" id="step-update" data-step="update"><div class="step-dot"></div><div class="step-label">System update</div></div>
+              <div class="install-step" id="step-bbr" data-step="bbr"><div class="step-dot"></div><div class="step-label">BBR + UDP tuning</div></div>
+              <div class="install-step" id="step-firewall" data-step="firewall"><div class="step-dot"></div><div class="step-label">Firewall</div></div>
+              <div class="install-step" id="step-dl" data-step="dl"><div class="step-dot"></div><div class="step-label">Download binaries</div></div>
+              <div class="install-step" id="step-build" data-step="build"><div class="step-dot"></div><div class="step-label">Build / configuration</div></div>
+              <div class="install-step" id="step-config" data-step="config"><div class="step-dot"></div><div class="step-label">Configuring</div></div>
+              <div class="install-step" id="step-service" data-step="service"><div class="step-dot"></div><div class="step-label">Systemd service</div></div>
+              <div class="install-step" id="step-start" data-step="start"><div class="step-dot"></div><div class="step-label">Starting</div></div>
+              <div class="install-step" id="step-done" data-step="done"><div class="step-dot"></div><div class="step-label">Done!</div></div>
             </div>
 
             <div class="terminal-wrap">
@@ -447,17 +447,17 @@
                 <span class="terminal-dot red"></span>
                 <span class="terminal-dot yellow"></span>
                 <span class="terminal-dot green"></span>
-                <span class="terminal-title">Лог установки</span>
+                <span class="terminal-title">Installation log</span>
               </div>
               <div class="terminal" id="installLog"></div>
             </div>
 
             <div class="install-done hidden" id="installDone">
               <div class="done-icon">✅</div>
-              <h3>Установка завершена!</h3>
-              <p>Прокси успешно настроены и запущены</p>
+              <h3>Installation completed!</h3>
+              <p>Proxies have been successfully configured and started</p>
               <div class="done-links-wrap" id="doneLinksWrap"></div>
-              <button class="btn btn-shiny" onclick="goToPage('dashboard')">На дашборд</button>
+              <button class="btn btn-shiny" onclick="goToPage('dashboard')">Go to dashboard</button>
             </div>
           </div>
         </div>
@@ -467,7 +467,7 @@
     <!-- ────── USERS PAGE ────── -->
     <div class="page" id="usersPage">
       <div class="page-header">
-        <h1 class="page-title">Пользователи прокси</h1>
+        <h1 class="page-title">Proxy users</h1>
       </div>
 
       <div class="tabs">
@@ -484,7 +484,7 @@
       <div class="users-actions">
         <button class="btn btn-shiny" onclick="showAddUserModal()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Добавить пользователя
+          Add user
         </button>
       </div>
 
@@ -492,20 +492,20 @@
         <div class="card-body">
           <div class="empty-state" id="emptyUsers" style="display:none">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <p>Пользователи не добавлены</p>
-            <button class="btn btn-shiny" onclick="showAddUserModal()">Добавить первого</button>
+            <p>No users added</p>
+            <button class="btn btn-shiny" onclick="showAddUserModal()">Add first</button>
           </div>
           <div class="table-wrap">
             <table class="data-table" id="usersTable" style="display:none">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Логин</th>
-                  <th>Пароль</th>
-                  <th>Ссылка подключения</th>
-                  <th>Создан</th>
-                  <th>Срок</th>
-                  <th>Действия</th>
+                  <th>Username</th>
+                  <th>Password</th>
+                  <th>Connection link</th>
+                  <th>Created</th>
+                  <th>Expiration</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody"></tbody>
@@ -518,39 +518,39 @@
     <!-- ────── TUNING PAGE ────── -->
     <div class="page" id="tuningPage">
       <div class="page-header">
-        <h1 class="page-title">Сетевой тюнинг</h1>
+        <h1 class="page-title">Network tuning</h1>
         <button class="btn btn-outline btn-sm" onclick="loadTuning()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Обновить
+          Refresh
         </button>
       </div>
 
       <div class="card info-card" style="margin-bottom:18px">
         <div class="card-body">
-          <h3 style="margin-top:0">Что это и зачем?</h3>
+          <h3 style="margin-top:0">What is this and why?</h3>
           <p style="color:var(--text-secondary);line-height:1.55;margin:6px 0 10px 0">
-            Linux по умолчанию настроен под обычный веб-трафик, а не под VPN. Для прокси это означает:
-            медленный TCP на больших задержках (NaiveProxy) и потери UDP-пакетов при высоком трафике (Hysteria2).
-            На этой странице <strong>один раз</strong> применяется набор sysctl-параметров, который снимает эти ограничения.
-            Руками менять значения не нужно — они подобраны производителями Hysteria2/Caddy и проверены на практике.
+            Linux is tuned by default for regular web traffic, not for VPN. For a proxy this means:
+            slow TCP on high latency (NaiveProxy) and UDP packet loss under high traffic (Hysteria2).
+            This page <strong>once</strong> applies a set of sysctl parameters that removes these limitations.
+            You don't need to change values manually — they are chosen by Hysteria2/Caddy developers and tested in practice.
           </p>
           <ul class="tuning-expl">
-            <li><strong>BBR</strong> (<code>net.ipv4.tcp_congestion_control=bbr</code>) — современный алгоритм контроля перегрузок
-              от Google. Даёт <strong>в 2–10 раз больше пропускной способности</strong> на TCP-соединениях с потерями
-              (особенно если клиент далеко от сервера). Заменяет старый cubic. Требует ядро ≥ 4.9 (Ubuntu 20.04+ — OK).</li>
-            <li><strong>fq</strong> (<code>net.core.default_qdisc=fq</code>) — справедливая очередь пакетов,
-              нужна для корректной работы BBR. Без неё BBR работает, но хуже.</li>
-            <li><strong>UDP buffers 16 МБ</strong> (<code>net.core.rmem_max/wmem_max=16777216</code>) —
-              Hysteria2 на высоких скоростях (>100 Mbps) пишет в сокет большими порциями. Дефолтные 212 КБ
-              буфера приводят к потерям и падению скорости в разы. Hysteria <strong>сама предупреждает</strong>
-              об этом при старте, если буфер маленький.</li>
-            <li><strong>TCP Fast Open</strong> (<code>net.ipv4.tcp_fastopen=3</code>) — ускоряет повторные подключения
-              NaiveProxy к тому же серверу (на ~1 RTT быстрее).</li>
-            <li><strong>conntrack 1M</strong> — повышает лимит одновременных соединений (для 100+ пользователей).</li>
+            <li><strong>BBR</strong> (<code>net.ipv4.tcp_congestion_control=bbr</code>) — modern congestion control algorithm from Google.
+              Gives <strong>2–10 times higher throughput</strong> on TCP connections with packet loss
+              (especially when the client is far from the server). Replaces old cubic. Requires kernel ≥ 4.9 (Ubuntu 20.04+ — OK).</li>
+            <li><strong>fq</strong> (<code>net.core.default_qdisc=fq</code>) — fair queuing discipline,
+              required for BBR to work properly. Without it BBR works but worse.</li>
+            <li><strong>UDP buffers 16 MB</strong> (<code>net.core.rmem_max/wmem_max=16777216</code>) —
+              Hysteria2 at high speeds (>100 Mbps) writes to the socket in large chunks. The default 212 KB
+              buffer leads to losses and speed drops by several times. Hysteria <strong>itself warns</strong>
+              about this at startup if the buffer is small.</li>
+            <li><strong>TCP Fast Open</strong> (<code>net.ipv4.tcp_fastopen=3</code>) — speeds up repeated
+              NaiveProxy connections to the same server (by ~1 RTT).</li>
+            <li><strong>conntrack 1M</strong> — raises the limit of concurrent connections (for 100+ users).</li>
           </ul>
           <p style="color:var(--text-muted);font-size:13px;margin:10px 0 0 0">
-            Параметры сохраняются в <code>/etc/sysctl.d/99-rixxx-tune.conf</code> и применяются мгновенно,
-            а также автоматически после перезагрузки. Откатить: <code>rm /etc/sysctl.d/99-rixxx-tune.conf && sysctl --system</code>.
+            Parameters are saved in <code>/etc/sysctl.d/99-rixxx-tune.conf</code> and applied immediately,
+            and also automatically after reboot. To revert: <code>rm /etc/sysctl.d/99-rixxx-tune.conf && sysctl --system</code>.
           </p>
         </div>
       </div>
@@ -564,7 +564,7 @@
               </div>
               <div>
                 <h3 class="card-title">TCP / BBR</h3>
-                <div class="card-subtitle">для NaiveProxy</div>
+                <div class="card-subtitle">for NaiveProxy</div>
               </div>
             </div>
             <div class="service-status" id="bbrBadge"><span class="dot dot-gray"></span> —</div>
@@ -584,8 +584,8 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
               </div>
               <div>
-                <h3 class="card-title">UDP буферы</h3>
-                <div class="card-subtitle">для Hysteria2</div>
+                <h3 class="card-title">UDP buffers</h3>
+                <div class="card-subtitle">for Hysteria2</div>
               </div>
             </div>
             <div class="service-status" id="udpBadge"><span class="dot dot-gray"></span> —</div>
@@ -601,15 +601,15 @@
 
       <div class="card tuning-action-card">
         <div class="card-body">
-          <h3 class="tuning-title">Применить оптимизации</h3>
+          <h3 class="tuning-title">Apply optimizations</h3>
           <p class="tuning-desc">
-            Установщик уже применил этот тюнинг автоматически. Кнопка нужна, если после установки вы откатывали sysctl,
-            обновляли ядро, или панель показывает что BBR/буферы ниже нормы (серые/красные бейджи сверху).
+            The installer already applied this tuning automatically. The button is needed if after installation you rolled back sysctl,
+            updated the kernel, or the panel shows that BBR/buffers are below normal (gray/red badges above).
           </p>
           <div class="form-actions form-actions-center">
             <button class="btn btn-shiny btn-lg" id="applyTuneBtn" onclick="applyTuning()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              Применить тюнинг
+              Apply tuning
             </button>
           </div>
           <div id="tuneResult" class="alert hidden"></div>
@@ -620,42 +620,42 @@
     <!-- ────── BYPASS PAGE ────── -->
     <div class="page" id="bypassPage">
       <div class="page-header">
-        <h1 class="page-title">Bypass — прямой трафик</h1>
+        <h1 class="page-title">Bypass — direct traffic</h1>
         <button class="btn btn-outline btn-sm" onclick="loadBypass()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Обновить
+          Refresh
         </button>
       </div>
 
       <div class="card info-card" style="margin-bottom:18px;border-left:4px solid var(--warn, #f59e0b)">
         <div class="card-body">
-          <h3 style="margin-top:0">⚠️ Функция в тестировании</h3>
+          <h3 style="margin-top:0">⚠️ Feature under testing</h3>
           <p style="color:var(--text-secondary);line-height:1.55;margin:6px 0 0 0">
-            <strong>Bypass находится в активном тестировании.</strong> Перед использованием в продакшне
-            <strong>обязательно проверьте на своём клиенте</strong>: что нужные сайты открываются напрямую,
-            а остальной трафик продолжает идти через VPN. Если что-то работает не так — откатитесь кнопкой
-            «Очистить» ниже и сообщите автору в Telegram.
+            <strong>Bypass is under active testing.</strong> Before using in production,
+            <strong>be sure to test on your own client</strong>: that the required sites open directly,
+            and the rest of the traffic continues through the VPN. If something doesn't work as expected — roll back with the
+            «Clear» button below and report to the author on Telegram.
           </p>
         </div>
       </div>
 
       <div class="card info-card" style="margin-bottom:18px">
         <div class="card-body">
-          <h3 style="margin-top:0">Зачем это нужно</h3>
+          <h3 style="margin-top:0">Why is this needed</h3>
           <p style="color:var(--text-secondary);line-height:1.55;margin:6px 0 10px 0">
-            Некоторые сайты (российские банки, госуслуги, маркетплейсы) <strong>блокируют иностранные IP</strong>.
-            Если весь трафик идёт через VPN за рубежом — эти сайты не откроются. Решение — пускать трафик
-            к таким сайтам <strong>напрямую</strong>, минуя VPN. Это называется <em>split tunneling</em> / bypass.
+            Some sites (Russian banks, government services, marketplaces) <strong>block foreign IPs</strong>.
+            If all traffic goes through a VPN abroad — these sites won't open. The solution is to send traffic
+            to such sites <strong>directly</strong>, bypassing the VPN. This is called <em>split tunneling</em> / bypass.
           </p>
           <ul class="tuning-expl">
-            <li><strong>Hysteria2</strong> (UDP) поддерживает bypass на сервере через ACL — работает автоматически
-              для всех клиентов, настраивать на клиенте ничего не нужно.</li>
-            <li><strong>NaiveProxy</strong> (TCP через Caddy forward_proxy) <u>не поддерживает</u> серверный ACL.
-              Для Naive bypass настраивается только на клиенте (Happ/Karing/v2rayN — все поддерживают).
-              В инструкции ниже даны готовые списки.</li>
+            <li><strong>Hysteria2</strong> (UDP) supports server-side bypass via ACL — works automatically
+              for all clients, no configuration needed on the client.</li>
+            <li><strong>NaiveProxy</strong> (TCP via Caddy forward_proxy) <u>does not support</u> server ACL.
+              For Naive, bypass is configured only on the client (Happ/Karing/v2rayN — all support it).
+              Ready-made lists are given in the instructions below.</li>
           </ul>
           <p style="color:var(--text-muted);font-size:13px;margin:10px 0 0 0">
-            После включения bypass применяется мгновенно — Hysteria2 перезапускается с новым ACL.
+            After enabling bypass it is applied immediately — Hysteria2 restarts with the new ACL.
           </p>
         </div>
       </div>
@@ -668,7 +668,7 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
               </div>
               <div>
-                <h3 class="card-title">Статус ACL для Hy2</h3>
+                <h3 class="card-title">ACL status for Hy2</h3>
                 <div class="card-subtitle" id="bypassSource">—</div>
               </div>
             </div>
@@ -676,9 +676,9 @@
           </div>
           <div class="card-body">
             <div class="info-rows">
-              <div class="info-row"><span class="info-key">Сетей в списке</span><span class="info-val mono" id="bypassCount">—</span></div>
-              <div class="info-row"><span class="info-key">Последнее обновление</span><span class="info-val mono" id="bypassUpdated">—</span></div>
-              <div class="info-row"><span class="info-key">Файл ACL</span><span class="info-val mono">/etc/hysteria/bypass-ru.acl</span></div>
+              <div class="info-row"><span class="info-key">Networks in list</span><span class="info-val mono" id="bypassCount">—</span></div>
+              <div class="info-row"><span class="info-key">Last update</span><span class="info-val mono" id="bypassUpdated">—</span></div>
+              <div class="info-row"><span class="info-key">ACL file</span><span class="info-val mono">/etc/hysteria/bypass-ru.acl</span></div>
             </div>
           </div>
         </div>
@@ -686,22 +686,22 @@
 
       <div class="card" style="margin-top:16px">
         <div class="card-body">
-          <h3 class="tuning-title">Загрузить / обновить список</h3>
+          <h3 class="tuning-title">Upload / update list</h3>
           <p class="tuning-desc">
-            Вставьте JSON-файл в формате <code>{"service.ru": ["1.2.3.0/24", ...], ...}</code>
-            или просто массив <code>["1.2.3.0/24", ...]</code>. Поддерживаются IPv4 и IPv6 в CIDR-нотации.
+            Paste a JSON file in the format <code>{"service.ru": ["1.2.3.0/24", ...], ...}</code>
+            or just an array <code>["1.2.3.0/24", ...]</code>. Supports IPv4 and IPv6 in CIDR notation.
           </p>
           <div class="form-group">
-            <label class="form-label">JSON / список CIDR</label>
+            <label class="form-label">JSON / CIDR list</label>
             <textarea id="bypassInput" class="form-input" rows="8" placeholder='{"alfabank.ru":["5.101.37.0/24", ...], "gosuslugi.ru":[...]}' style="font-family:var(--font-mono);font-size:12px"></textarea>
-            <div class="form-hint">Источник (для заметок)</div>
-            <input id="bypassSourceInput" class="form-input" placeholder="например: antifilter.download от 20.04.2026" style="margin-top:6px">
+            <div class="form-hint">Source (for notes)</div>
+            <input id="bypassSourceInput" class="form-input" placeholder="e.g. antifilter.download dated 20.04.2026" style="margin-top:6px">
           </div>
           <div class="form-actions" style="gap:10px">
-            <button class="btn btn-shiny" onclick="saveBypass(true)">Загрузить и включить</button>
-            <button class="btn btn-outline" onclick="saveBypass(false)">Только сохранить</button>
+            <button class="btn btn-shiny" onclick="saveBypass(true)">Upload and enable</button>
+            <button class="btn btn-outline" onclick="saveBypass(false)">Save only</button>
             <button class="btn btn-outline" id="bypassToggleBtn" onclick="toggleBypass()">—</button>
-            <button class="btn btn-danger" onclick="clearBypass()">Очистить</button>
+            <button class="btn btn-danger" onclick="clearBypass()">Clear</button>
           </div>
           <div id="bypassResult" class="alert hidden"></div>
         </div>
@@ -709,7 +709,7 @@
 
       <div class="card" style="margin-top:16px">
         <div class="card-body">
-          <h3 class="tuning-title">Предпросмотр (первые 50 сетей)</h3>
+          <h3 class="tuning-title">Preview (first 50 networks)</h3>
           <pre id="bypassPreview" class="log-pre" style="max-height:240px">—</pre>
         </div>
       </div>
@@ -718,94 +718,94 @@
     <!-- ────── DIAGNOSTICS PAGE ────── -->
     <div class="page" id="diagPage">
       <div class="page-header">
-        <h1 class="page-title">Диагностика</h1>
+        <h1 class="page-title">Diagnostics</h1>
         <button class="btn btn-outline btn-sm" onclick="loadDiagPorts()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Обновить
+          Refresh
         </button>
       </div>
 
       <div class="card diag-card">
         <div class="card-header">
-          <h3 class="card-title">Порты, сервисы и TLS</h3>
+          <h3 class="card-title">Ports, services and TLS</h3>
         </div>
         <div class="card-body">
-          <p class="muted">Проверка кто слушает <code>:443</code> по TCP и UDP + статус TLS-сертификата Hy2. Если на UDP/443 висит Caddy — Hy2 не сможет запуститься.</p>
-          <pre class="log-box" id="diagPortsBox">Загружаю...</pre>
+          <p class="muted">Check who is listening on <code>:443</code> over TCP and UDP + TLS certificate status for Hy2. If Caddy is listening on UDP/443 — Hy2 will not be able to start.</p>
+          <pre class="log-box" id="diagPortsBox">Loading...</pre>
         </div>
       </div>
 
       <div class="card diag-card">
         <div class="card-header">
-          <h3 class="card-title">Активный конфиг <code>/etc/hysteria/config.yaml</code></h3>
-          <button class="btn btn-outline btn-sm" onclick="loadDiagHysteriaConfig()">Показать</button>
+          <h3 class="card-title">Active config <code>/etc/hysteria/config.yaml</code></h3>
+          <button class="btn btn-outline btn-sm" onclick="loadDiagHysteriaConfig()">Show</button>
         </div>
         <div class="card-body">
-          <p class="muted">Пароли замаскированы как <code>***masked***</code>. Полезно когда Hy2 ведёт себя странно — сразу видно какой masquerade, какой TLS и все ли секции на месте.</p>
-          <pre class="log-box log-box-tall" id="diagHysteriaCfg">— нажмите «Показать» —</pre>
+          <p class="muted">Passwords are masked as <code>***masked***</code>. Useful when Hy2 behaves strangely — you can immediately see which masquerade, which TLS and whether all sections are in place.</p>
+          <pre class="log-box log-box-tall" id="diagHysteriaCfg">— click «Show» —</pre>
         </div>
       </div>
 
       <div class="card diag-card" style="border-left:4px solid var(--warn, #f59e0b)">
         <div class="card-header">
-          <h3 class="card-title">🔧 Починить Hy2 TLS (авто)</h3>
-          <button class="btn btn-shiny btn-sm" onclick="fixHy2Tls()">Починить</button>
+          <h3 class="card-title">🔧 Fix Hy2 TLS (auto)</h3>
+          <button class="btn btn-shiny btn-sm" onclick="fixHy2Tls()">Fix</button>
         </div>
         <div class="card-body">
-          <p class="muted">Если Hy2 падает с ошибкой <code>rateLimited</code> / <code>HTTP 429</code> / <code>could not get certificate</code> — значит он пытается получить свой ACME-сертификат, хотя Caddy уже выдал общий. Эта кнопка найдёт фактический cert Caddy (от любого CA: Let's Encrypt / ZeroSSL) и пропишет его в Hy2 конфиг. Потом перезапустит hysteria-server.</p>
-          <pre class="log-box" id="fixHy2Result" style="margin-top:12px">— нажмите «Починить» —</pre>
+          <p class="muted">If Hy2 crashes with error <code>rateLimited</code> / <code>HTTP 429</code> / <code>could not get certificate</code> — it means it is trying to obtain its own ACME certificate, although Caddy has already issued a shared one. This button will find the actual Caddy cert (from any CA: Let's Encrypt / ZeroSSL) and write it into the Hy2 config. Then it will restart hysteria-server.</p>
+          <pre class="log-box" id="fixHy2Result" style="margin-top:12px">— click «Fix» —</pre>
         </div>
       </div>
 
       <div class="cards-row diag-logs-row">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"><span class="dot dot-naive"></span> Логи Caddy (Naive)</h3>
-            <button class="btn btn-outline btn-sm" onclick="loadDiagLogs('naive')">Обновить</button>
+            <h3 class="card-title"><span class="dot dot-naive"></span> Caddy logs (Naive)</h3>
+            <button class="btn btn-outline btn-sm" onclick="loadDiagLogs('naive')">Refresh</button>
           </div>
           <div class="card-body">
-            <pre class="log-box log-box-tall" id="diagLogNaive">— нажмите «Обновить» —</pre>
+            <pre class="log-box log-box-tall" id="diagLogNaive">— click «Refresh» —</pre>
           </div>
         </div>
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"><span class="dot dot-hy2"></span> Логи Hysteria2</h3>
-            <button class="btn btn-outline btn-sm" onclick="loadDiagLogs('hy2')">Обновить</button>
+            <h3 class="card-title"><span class="dot dot-hy2"></span> Hysteria2 logs</h3>
+            <button class="btn btn-outline btn-sm" onclick="loadDiagLogs('hy2')">Refresh</button>
           </div>
           <div class="card-body">
-            <pre class="log-box log-box-tall" id="diagLogHy2">— нажмите «Обновить» —</pre>
+            <pre class="log-box log-box-tall" id="diagLogHy2">— click «Refresh» —</pre>
           </div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-body">
-          <h3 class="diag-help-title">Если Hy2 запущен но клиент не может подключиться:</h3>
+          <h3 class="diag-help-title">If Hy2 is running but the client cannot connect:</h3>
           <ul class="diag-help-list">
-            <li><strong>В логах <code>suppressing panic for copyResponse / H3_GENERAL_PROTOCOL_ERROR / timeout: no recent network activity</code></strong> — это ответы masquerade на запросы клиентов, которые НЕ прошли Hy2-авторизацию. Значит клиент подключается с неверным паролем или неверной ссылкой.</li>
-            <li><strong>Проверьте ссылку</strong>: формат <code>hysteria2://PASSWORD@DOMAIN:443?sni=DOMAIN#name</code>. Для userpass-auth пароль = <code>username:password</code>.</li>
-            <li><strong>Cert невалиден</strong> — клиент не принимает cert Caddy. В диагностике выше проверьте что cert-файл существует и доступен (<code>perms 644</code>).</li>
-            <li><strong>Файрволл провайдера</strong> блокирует UDP/443 на стороне клиента — попробуйте мобильный интернет или VPN через другой регион.</li>
+            <li><strong>Logs show <code>suppressing panic for copyResponse / H3_GENERAL_PROTOCOL_ERROR / timeout: no recent network activity</code></strong> — these are masquerade responses to client requests that did NOT pass Hy2 authentication. Means the client is connecting with the wrong password or wrong link.</li>
+            <li><strong>Check the link</strong>: format <code>hysteria2://PASSWORD@DOMAIN:443?sni=DOMAIN#name</code>. For userpass-auth password = <code>username:password</code>.</li>
+            <li><strong>Cert invalid</strong> — the client rejects the Caddy cert. In the diagnostics above check that the cert file exists and is accessible (<code>perms 644</code>).</li>
+            <li><strong>Provider firewall</strong> blocks UDP/443 on the client side — try mobile internet or VPN via another region.</li>
           </ul>
 
-          <h3 class="diag-help-title" style="margin-top:20px">CLI-инструменты на сервере:</h3>
+          <h3 class="diag-help-title" style="margin-top:20px">CLI tools on the server:</h3>
           <ul class="diag-help-list">
-            <li><strong>Проверить состояние всей установки</strong> (версия, сервисы, TLS, порты, masquerade, режим доступа):
-              <code>bash update.sh --status</code> — работает без root, безопасно запускать в любой момент.</li>
-            <li><strong>Восстановить сломанную установку</strong> (регенерация Caddyfile и Hysteria-конфига из <code>config.json</code>,
-              авто-бэкап в <code>/etc/rixxx-panel/backups/</code>, валидация и откат при ошибке):
-              <code>sudo bash update.sh --repair</code>. Перед запуском полезно сделать
-              <code>sudo bash update.sh --repair --dry-run</code> — покажет что будет сделано без изменений.</li>
-            <li><strong>Применить накопительные патчи</strong> (без переустановки): <code>sudo bash update.sh</code>.
-              Пользователи, домены и сертификаты сохраняются.</li>
+            <li><strong>Check the entire installation state</strong> (version, services, TLS, ports, masquerade, access mode):
+              <code>bash update.sh --status</code> — works without root, safe to run at any time.</li>
+            <li><strong>Recover a broken installation</strong> (regenerate Caddyfile and Hysteria config from <code>config.json</code>,
+              auto-backup in <code>/etc/rixxx-panel/backups/</code>, validation and rollback on error):
+              <code>sudo bash update.sh --repair</code>. Before running it is useful to do
+              <code>sudo bash update.sh --repair --dry-run</code> — shows what will be done without making changes.</li>
+            <li><strong>Apply cumulative patches</strong> (without reinstall): <code>sudo bash update.sh</code>.
+              Users, domains and certificates are kept.</li>
           </ul>
 
-          <h3 class="diag-help-title" style="margin-top:20px">Если Hy2 вообще не запускается:</h3>
+          <h3 class="diag-help-title" style="margin-top:20px">If Hy2 does not start at all:</h3>
           <ul class="diag-help-list">
-            <li><strong>UDP/443 занят Caddy</strong> (HTTP/3). Решение: в <code>/etc/caddy/Caddyfile</code> в глобальном блоке <code>{}</code> должно быть <code>servers { protocols h1 h2 }</code>, потом <code>systemctl reload caddy &amp;&amp; systemctl restart hysteria-server</code>.</li>
-            <li><strong>Нет TLS-сертификата</strong>. Caddy выдаёт его при первом обращении — убедитесь что A-запись домена указывает на этот сервер и порт 80 доступен снаружи.</li>
-            <li><strong>Бинарник для другой архитектуры</strong> — посмотрите в Дашборде.</li>
-            <li><strong>UFW</strong> блокирует UDP/443 — выполните: <code>ufw allow 443/udp &amp;&amp; ufw reload</code>.</li>
+            <li><strong>UDP/443 is occupied by Caddy</strong> (HTTP/3). Solution: in <code>/etc/caddy/Caddyfile</code> in the global block <code>{}</code> there should be <code>servers { protocols h1 h2 }</code>, then <code>systemctl reload caddy &amp;&amp; systemctl restart hysteria-server</code>.</li>
+            <li><strong>No TLS certificate</strong>. Caddy issues it on first request — make sure the domain's A record points to this server and port 80 is reachable from outside.</li>
+            <li><strong>Binary for a different architecture</strong> — check on the Dashboard.</li>
+            <li><strong>UFW</strong> blocks UDP/443 — run: <code>ufw allow 443/udp &amp;&amp; ufw reload</code>.</li>
           </ul>
         </div>
       </div>
@@ -814,57 +814,57 @@
     <!-- ────── SETTINGS PAGE ────── -->
     <div class="page" id="settingsPage">
       <div class="page-header">
-        <h1 class="page-title">Настройки</h1>
+        <h1 class="page-title">Settings</h1>
       </div>
       <div class="settings-grid">
 
         <div class="card">
-          <div class="card-header"><h3 class="card-title">Смена пароля панели</h3></div>
+          <div class="card-header"><h3 class="card-title">Change panel password</h3></div>
           <div class="card-body">
             <div id="pwdChangeAlert" class="alert hidden"></div>
             <div class="form-group">
-              <label class="form-label">Текущий пароль</label>
+              <label class="form-label">Current password</label>
               <input type="password" id="currentPwd" class="form-input" placeholder="••••••••" autocomplete="current-password">
             </div>
             <div class="form-group">
-              <label class="form-label">Новый пароль</label>
+              <label class="form-label">New password</label>
               <input type="password" id="newPwd" class="form-input" placeholder="••••••••" autocomplete="new-password">
             </div>
             <div class="form-group">
-              <label class="form-label">Подтвердите пароль</label>
+              <label class="form-label">Confirm password</label>
               <input type="password" id="confirmPwd" class="form-input" placeholder="••••••••" autocomplete="new-password">
             </div>
             <div class="form-actions">
-              <button class="btn btn-shiny" onclick="changePassword()">Сохранить пароль</button>
+              <button class="btn btn-shiny" onclick="changePassword()">Save password</button>
             </div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3 class="card-title">Информация о панели</h3></div>
+          <div class="card-header"><h3 class="card-title">Panel information</h3></div>
           <div class="card-body">
             <div class="info-rows">
-              <div class="info-row"><span class="info-key">Версия</span><span class="info-val">1.0.0</span></div>
-              <div class="info-row"><span class="info-key">Автор</span><span class="info-val">RIXXX</span></div>
-              <div class="info-row"><span class="info-key">Стек</span><span class="info-val">Node.js + Caddy + Hysteria2</span></div>
+              <div class="info-row"><span class="info-key">Version</span><span class="info-val">1.0.0</span></div>
+              <div class="info-row"><span class="info-key">Author</span><span class="info-val">RIXXX</span></div>
+              <div class="info-row"><span class="info-key">Stack</span><span class="info-val">Node.js + Caddy + Hysteria2</span></div>
               <div class="info-row"><span class="info-key">GitHub</span><a href="https://github.com/cwash797-cmd" target="_blank" class="info-val link">cwash797-cmd</a></div>
             </div>
             <div class="support-btns">
               <a href="https://app.lava.top/2107724612?tabId=donate" target="_blank" class="btn btn-shiny btn-full">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C12 21 3 13.5 3 8a9 9 0 0 1 18 0c0 5.5-9 13-9 13z"/><circle cx="12" cy="8" r="2"/></svg>
-                Поддержать автора ❤️
+                Support the author ❤️
               </a>
               <a href="https://t.me/russian_paradice_vpn" target="_blank" class="btn btn-tg btn-full">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                Подписывайся в Telegram
+                Subscribe on Telegram
               </a>
             </div>
           </div>
         </div>
 
-        <!-- Клиенты -->
+        <!-- Clients -->
         <div class="card settings-clients-card">
-          <div class="card-header"><h3 class="card-title">Клиентские приложения</h3></div>
+          <div class="card-header"><h3 class="card-title">Client applications</h3></div>
           <div class="card-body">
             <div class="clients-list">
               <!-- iOS -->
@@ -929,7 +929,7 @@
 <div class="modal-overlay hidden" id="addUserModal">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="addUserModalTitle">Добавить пользователя</h3>
+      <h3 id="addUserModalTitle">Add user</h3>
       <button class="modal-close" onclick="closeModal('addUserModal')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -937,14 +937,14 @@
     <div class="modal-body">
       <div id="addUserAlert" class="alert hidden"></div>
       <div class="form-group">
-        <label class="form-label">Логин</label>
+        <label class="form-label">Username</label>
         <input type="text" id="newUserLogin" class="form-input" placeholder="username" autocomplete="off">
       </div>
       <div class="form-group">
-        <label class="form-label">Пароль</label>
+        <label class="form-label">Password</label>
         <div class="input-group">
           <input type="text" id="newUserPassword" class="form-input" placeholder="password" autocomplete="off">
-          <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('newUserPassword')" title="Сгенерировать пароль">
+          <button type="button" class="btn btn-outline btn-gen" onclick="genPwdInto('newUserPassword')" title="Generate password">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="2" y="2" width="20" height="20" rx="4"/>
               <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/>
@@ -957,24 +957,24 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Срок действия</label>
+        <label class="form-label">Expiration</label>
         <select id="newUserExpire" class="form-input">
-          <option value="0">Бессрочно</option>
-          <option value="1">1 день</option>
-          <option value="3">3 дня</option>
-          <option value="7" selected>7 дней</option>
-          <option value="14">14 дней</option>
-          <option value="30">30 дней</option>
-          <option value="90">90 дней</option>
-          <option value="180">180 дней</option>
-          <option value="365">1 год</option>
+          <option value="0">Unlimited</option>
+          <option value="1">1 day</option>
+          <option value="3">3 days</option>
+          <option value="7" selected>7 days</option>
+          <option value="14">14 days</option>
+          <option value="30">30 days</option>
+          <option value="90">90 days</option>
+          <option value="180">180 days</option>
+          <option value="365">1 year</option>
         </select>
-        <div class="form-hint">После истечения пользователь автоматически перестанет подключаться (проверка каждые 5 мин).</div>
+        <div class="form-hint">After expiration, the user will automatically stop connecting (checked every 5 minutes).</div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Отмена</button>
-      <button class="btn btn-shiny" onclick="addUser()">Добавить</button>
+      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-shiny" onclick="addUser()">Add</button>
     </div>
   </div>
 </div>
@@ -982,32 +982,32 @@
 <div class="modal-overlay hidden" id="extendUserModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>Продлить / изменить срок</h3>
+      <h3>Extend / change expiration</h3>
       <button class="modal-close" onclick="closeModal('extendUserModal')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <p>Пользователь: <strong id="extendUserName"></strong></p>
+      <p>User: <strong id="extendUserName"></strong></p>
       <p class="form-hint" id="extendUserCurrent"></p>
       <div class="form-group">
-        <label class="form-label">Новый срок (от текущего момента)</label>
+        <label class="form-label">New term (from the current moment)</label>
         <select id="extendUserDays" class="form-input">
-          <option value="0">Бессрочно</option>
-          <option value="1">1 день</option>
-          <option value="3">3 дня</option>
-          <option value="7" selected>7 дней</option>
-          <option value="14">14 дней</option>
-          <option value="30">30 дней</option>
-          <option value="90">90 дней</option>
-          <option value="180">180 дней</option>
-          <option value="365">1 год</option>
+          <option value="0">Unlimited</option>
+          <option value="1">1 day</option>
+          <option value="3">3 days</option>
+          <option value="7" selected>7 days</option>
+          <option value="14">14 days</option>
+          <option value="30">30 days</option>
+          <option value="90">90 days</option>
+          <option value="180">180 days</option>
+          <option value="365">1 year</option>
         </select>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('extendUserModal')">Отмена</button>
-      <button class="btn btn-shiny" onclick="confirmExtendUser()">Сохранить</button>
+      <button class="btn btn-outline" onclick="closeModal('extendUserModal')">Cancel</button>
+      <button class="btn btn-shiny" onclick="confirmExtendUser()">Save</button>
     </div>
   </div>
 </div>
@@ -1015,17 +1015,17 @@
 <div class="modal-overlay hidden" id="deleteUserModal">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <h3>Удалить пользователя</h3>
+      <h3>Delete user</h3>
       <button class="modal-close" onclick="closeModal('deleteUserModal')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <p>Удалить пользователя <strong id="deleteUserName"></strong>?<br>Это действие нельзя отменить.</p>
+      <p>Delete user <strong id="deleteUserName"></strong>?<br>This action cannot be undone.</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('deleteUserModal')">Отмена</button>
-      <button class="btn btn-danger" onclick="confirmDeleteUser()">Удалить</button>
+      <button class="btn btn-outline" onclick="closeModal('deleteUserModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDeleteUser()">Delete</button>
     </div>
   </div>
 </div>
